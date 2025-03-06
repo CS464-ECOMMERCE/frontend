@@ -9,19 +9,80 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #0a0a0a;
+    --background: #ffffff;
   }
+}
+
+@font-face {
+  font-family: "MyFont";
+  src: url("/fonts/Spectral/Spectral-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "MyFont";
+  min-height: screen;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.display-screen {
+  max-width: 80rem;
+}
+
+.product-layout {
+  margin-left: 2rem;
+}
+
+.product-card {
+  width: 100%;
+  min-width: 200px;
+  height: 300px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.product-card:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+.product-card .img {
+  height: 60%;
+}
+
+.product-card .content {
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-card .tag-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.product-card .tag {
+  margin: 0.5rem 0 0.2rem 0;
+  align-self: flex-start;
+  height: fit-content;
+}
+
+.header {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
+  margin: 0 0 1rem 0;
 }
