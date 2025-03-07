@@ -2,7 +2,7 @@
 import { Grid2, Typography } from "@mui/material";
 import ProductCard from "./ProductCard";
 
-export default function ProductLayout({ header, query }) {
+export default function ProductLayout({ header }) {
   return (
     <div className="product-layout">
       <div className="header">

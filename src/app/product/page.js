@@ -6,6 +6,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const placeholder = [
   {
+    name: "All",
+    query: "all",
+  },
+  {
     name: "Category 1",
     query: "category1",
   },
@@ -40,13 +44,16 @@ export default function Home() {
     const category = searchParams.get("category");
     const index = placeholder.findIndex((item) => item.query === category);
     if (index !== -1) {
-      console.log(index);
       setValue(index);
     }
   }, [searchParams]);
 
   useEffect(() => {
     const categoryQuery = placeholder[value].query;
+    if (categoryQuery === "all") {
+      router.replace("/product");
+      return;
+    }
     router.push(`/product/?category=${categoryQuery}`);
   }, [value]);
 
@@ -62,9 +69,9 @@ export default function Home() {
         onChange={handleChange}
         className="flex min-w-fit"
       >
-        {placeholder.map((item, i) => (
-          <Tab key={i} label={item.name}></Tab>
-        ))}
+        {placeholder.map((item, i) => {
+          return <Tab key={i} label={item.name}></Tab>;
+        })}
       </Tabs>
       <ProductLayout header={placeholder[value].name} />
     </div>
