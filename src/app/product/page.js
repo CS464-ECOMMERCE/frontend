@@ -35,7 +35,7 @@ const placeholder = [
   },
 ];
 
-export default function Home() {
+export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [value, setValue] = React.useState(0);

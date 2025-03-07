@@ -1,7 +1,7 @@
 import "./globals.css";
 import Navbar from "../../components/Navbar";
-import theme from "@/theme";
 import { Box, ThemeProvider } from "@mui/material";
+import theme from "./theme";
 
 export const metadata = {
   title: "CS464 Ecommerce",
@@ -14,8 +14,8 @@ export default function RootLayout({ children }) {
       <body>
         <ThemeProvider theme={theme}>
           <Navbar />
-          <Box component="main" sx={{ p: 3 }}>
-            <div className="display-screen">{children}</div>
+          <Box component="main" sx={{ p: 3 }} className="display-screen">
+            {children}
           </Box>
         </ThemeProvider>
       </body>

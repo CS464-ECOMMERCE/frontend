@@ -9,10 +9,10 @@ import {
 } from "@mui/material";
 import ProductTag from "./ProductTag";
 
-export default function ProductCard({ title, price, image }) {
+export default function ProductCard({ id, title, price, image, onClick }) {
   return (
     <Grid2 size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-      <Card className="product-card" elevation={4}>
+      <Card className="product-card" elevation={4} onClick={() => onClick(id)}>
         <CardMedia
           className="img"
           image={
