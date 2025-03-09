@@ -2,6 +2,7 @@
 import { ShoppingBasket } from "@mui/icons-material";
 import { Alert, Divider, Typography } from "@mui/material";
 import ProductQuantitySelector from "./ProductQuantitySelector";
+import ProductTabs from "./ProductTabs";
 
 export default function ProductDetails() {
   const sold = 5493;
@@ -23,9 +24,8 @@ export default function ProductDetails() {
       </Alert>
       <Typography variant="body1">Quantity: {maxQuantity}</Typography>
       <ProductQuantitySelector maxQuantity={maxQuantity} />
-      <Typography variant="h3">Product Details</Typography>
       <Divider />
-      <Typography variant="body1">Product Details</Typography>
+      <ProductTabs />
     </div>
   );
 }
