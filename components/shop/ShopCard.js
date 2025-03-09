@@ -8,7 +8,7 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import ShopTag from "./ShopTag";
+// import ShopTag from "./ShopTag";
 
 export default function ShopCard({
   id,
