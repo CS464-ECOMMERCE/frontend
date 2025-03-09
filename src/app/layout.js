@@ -11,7 +11,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
+      <body className="root-layout">
         <ThemeProvider theme={theme}>
           <Navbar />
           <Box component="main" sx={{ p: 3 }} className="display-screen">
