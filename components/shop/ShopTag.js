@@ -1,6 +1,6 @@
 import { Chip } from "@mui/material";
 
-export default function ProductTag() {
+export default function ShopTag() {
   return (
     <Chip
       label="New"

@@ -20,7 +20,7 @@ const navItems = [
   { name: "Home", link: "/" },
   {
     name: "Shop",
-    link: "/product",
+    link: "/shop",
   },
 ];
 
