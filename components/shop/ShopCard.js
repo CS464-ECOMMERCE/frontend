@@ -34,11 +34,11 @@ export default function ShopCard({
           />
           <CardContent className="content">
             <Typography variant="h5">{title ?? "Title"}</Typography>
-            <Divider />
+            {/* <Divider /> */}
             {/* <div className="tag-container">
               <ShopTag />
             </div> */}
-            <Typography variant="subtitle1">{price ?? "Price"}</Typography>
+            <Typography variant="body2">{price ?? "Price"}</Typography>
           </CardContent>
         </Card>
       )}
