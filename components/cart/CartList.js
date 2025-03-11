@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
 import CartCard from "./CartCard";
 import { Box } from "@mui/material";
 
-const items = [
+const itemPlaceholder = [
   {
     id: 1,
     name: "Product 1",
-    price: 100.50,
+    price: 100.5,
     quantity: 1,
     maxQuantity: 1,
   },
@@ -25,12 +26,31 @@ const items = [
   },
 ];
 
-export default function CartList() {
+export default function CartList({ loading, updateItems }) {
+  const itemsObject = itemPlaceholder.reduce(
+    (acc, item) => ((acc[item.id] = item), acc),
+    {}
+  );
+  const [items, setItems] = useState(itemsObject);
+  useEffect(() => {
+    updateItems(items);
+  }, [items]);
+
   return (
-    <Box className="cart-list">
-      {items.map((item, i) => (
-        <CartCard key={item} item={item} />
-      ))}
-    </Box>
+    <>
+      {loading ? (
+        <Box className="cart-list">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <CartCard key={i} loading />
+          ))}
+        </Box>
+      ) : (
+        <Box className="cart-list">
+          {Object.entries(items).map(([key, item], _) => (
+            <CartCard key={item.id} item={item} setItem={setItems} />
+          ))}
+        </Box>
+      )}
+    </>
   );
 }
