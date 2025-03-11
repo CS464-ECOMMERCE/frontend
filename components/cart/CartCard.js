@@ -1,17 +1,13 @@
-import { Add, Remove } from "@mui/icons-material";
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  IconButton,
-  Paper,
-  Typography,
-} from "@mui/material";
+"use client";
+import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import CartDeleteButton from "./CartDeleteButton";
+import ProductQuantitySelector from "../product/ProductQuantitySelector";
+import { useState } from "react";
 
-export default function CartCard({ price, quantity, maxQuantity, title }) {
-  const increment = () => setQty(() => qty + 1);
-  const decrement = () => setQty(() => qty - 1);
+export default function CartCard({ item }) {
+  const { price, maxQuantity, title } = item;
+
+  const [quantity, setQuantity] = useState(item.quantity);
 
   return (
     <Card className="cart-container" elevation={2}>
@@ -23,26 +19,23 @@ export default function CartCard({ price, quantity, maxQuantity, title }) {
 
         <div className="content-container">
           <div className="details">
-            <div className="text">
+            <div>
               <Typography variant="body1">{title ?? "Title"}</Typography>
               <Typography variant="body2" sx={{ color: "gray" }}>
-                Unit Price: $ {price ?? 34.12}
+                Unit Price: $ {price.toFixed(2) ?? 34.12}
               </Typography>
             </div>
-            <Paper variant="outlined" className="qty">
-              <IconButton>
-                <Remove />
-              </IconButton>
-              <Typography variant="body2">{quantity ?? 1}</Typography>
-              <IconButton>
-                <Add />
-              </IconButton>
-            </Paper>
+
+            <ProductQuantitySelector
+              currentQuantity={quantity}
+              maxQuantity={maxQuantity}
+              onQuantityChange={setQuantity}
+            />
           </div>
 
           <div className="total-actions">
             <Typography variant="body2" className="total">
-              $ {price && quantity ? price * quantity : 34.12}
+              $ {price && quantity ? (price * quantity).toFixed(2) : 34.12}
             </Typography>
 
             <div className="actions">

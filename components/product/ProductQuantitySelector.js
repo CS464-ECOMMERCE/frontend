@@ -1,38 +1,34 @@
-import { Add, Remove, ShoppingCart } from "@mui/icons-material";
-import { Button, Typography } from "@mui/material";
-import { useState } from "react";
+"use client";
+import { Add, Remove } from "@mui/icons-material";
+import { IconButton, Paper, Typography } from "@mui/material";
 
-export default function ProductQuantitySelector({ maxQuantity }) {
-  const [qty, setQty] = useState(1);
-  const increment = () => setQty(() => qty + 1);
-  const decrement = () => setQty(() => qty - 1);
+export default function ProductQuantitySelector({
+  currentQuantity,
+  maxQuantity,
+  onQuantityChange,
+}) {
+  const increment = () =>
+    onQuantityChange((prev) => Math.min(prev + 1, maxQuantity));
+  const decrement = () => onQuantityChange((prev) => Math.max(prev - 1, 1));
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex items-center gap-5">
-        <Button variant="outlined" onClick={decrement} disabled={qty <= 1}>
-          <Remove />
-        </Button>
-        <Typography variant="subtitle2">{qty}</Typography>
-        <Button
-          variant="outlined"
-          onClick={increment}
-          disabled={qty >= maxQuantity}
-        >
-          <Add />
-        </Button>
-      </div>
-      <Button
-        startIcon={<ShoppingCart />}
-        variant="contained"
-        sx={{
-          backgroundColor: "black",
-          color: "white",
-          "&:hover": { backgroundColor: "darkgray" },
-        }}
-      >
-        Add to Cart
-      </Button>
-    </div>
+    <Paper
+      variant="outlined"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: "fit-content",
+        gap: "1rem",
+      }}
+    >
+      <IconButton onClick={decrement} disabled={currentQuantity <= 1}>
+        <Remove />
+      </IconButton>
+      <Typography variant="body2">{currentQuantity ?? 1}</Typography>
+      <IconButton onClick={increment} disabled={currentQuantity >= maxQuantity}>
+        <Add />
+      </IconButton>
+    </Paper>
   );
 }

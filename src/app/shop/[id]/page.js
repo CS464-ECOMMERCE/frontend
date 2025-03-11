@@ -17,6 +17,14 @@ const imgPlaceholder = [
   },
 ];
 
+const productDetails = {
+  title: "Product Title",
+  price: 100,
+  description: "Product Description",
+  sold: 5493,
+  maxQuantity: 10,
+};
+
 export default function Page({ params }) {
   const { id } = params;
   console.log(id);
@@ -31,7 +39,7 @@ export default function Page({ params }) {
           <ProductImages images={imgPlaceholder} />
         </div>
         <div className="flex-1">
-          <ProductDetails />
+          <ProductDetails item={productDetails} />
         </div>
       </div>
     </div>

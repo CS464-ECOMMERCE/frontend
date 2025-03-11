@@ -3,15 +3,16 @@ import { ShoppingBasket } from "@mui/icons-material";
 import { Alert, Divider, Typography } from "@mui/material";
 import ProductQuantitySelector from "./ProductQuantitySelector";
 import ProductTabs from "./ProductTabs";
+import AddToCartButton from "./AddToCartButton";
+import { useState } from "react";
 
-export default function ProductDetails() {
-  const sold = 5493;
-  const money = 34.12;
-  const maxQuantity = 10;
+export default function ProductDetails({ item }) {
+  const { title, sold, price, maxQuantity } = item;
+  const [quantity, setQuantity] = useState(1);
 
   return (
     <div className="flex flex-col gap-8">
-      <Typography variant="h3">Product Name</Typography>
+      <Typography variant="h3">{title}</Typography>
       <Divider />{" "}
       <div className="flex items-center gap-5">
         <ShoppingBasket sx={{ color: "gray" }} />
@@ -20,10 +21,18 @@ export default function ProductDetails() {
         </Typography>
       </div>
       <Alert severity="info" icon={false}>
-        <Typography variant="h4">$ {money}</Typography>
+        <Typography variant="body2" color="gray">
+          Unit Price: $ {price.toFixed(2)}
+        </Typography>
+        <Typography variant="h4">$ {(price * quantity).toFixed(2)}</Typography>
       </Alert>
       <Typography variant="body1">Quantity: {maxQuantity}</Typography>
-      <ProductQuantitySelector maxQuantity={maxQuantity} />
+      <ProductQuantitySelector
+        currentQuantity={quantity}
+        maxQuantity={maxQuantity}
+        onQuantityChange={setQuantity}
+      />
+      <AddToCartButton />
       <Divider />
       <ProductTabs />
     </div>
