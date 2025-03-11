@@ -8,6 +8,7 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 // import ShopTag from "./ShopTag";
 
 export default function ShopCard({
@@ -24,9 +25,9 @@ export default function ShopCard({
         <Skeleton variant="rounded" className="shop-card" />
       ) : (
         <Card className="shop-card" onClick={() => onClick(id)}>
-          <CardMedia
+          <LazyLoadImage
             className="img"
-            image={
+            src={
               image ??
               "https://images.unsplash.com/photo-1519337265831-281ec6cc8514"
             }

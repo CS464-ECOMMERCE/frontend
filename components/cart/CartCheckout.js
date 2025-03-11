@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   CardContent,
   CardHeader,
@@ -26,11 +27,17 @@ export default function CartCheckout() {
 
       <Divider sx={{ width: "95%", margin: "0 auto" }} />
 
-      <CardContent className="cart-content">
+      <CardContent className="checkout-cart-content">
         <div className="item">
           <Typography variant="body1">Subtotal</Typography>
           <Typography variant="body1">$ 34.12</Typography>
         </div>
+      </CardContent>
+
+      <CardContent>
+        <Button variant="contained" className="checkout-btn">
+          Proceed to Checkout
+        </Button>
       </CardContent>
     </Card>
   );

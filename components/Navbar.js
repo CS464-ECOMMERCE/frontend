@@ -14,10 +14,12 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useRouter } from "next/navigation";
+import { ShoppingCart } from "@mui/icons-material";
+import { Badge } from "@mui/material";
 
 const drawerWidth = 240;
 const navItems = [
-  { name: "Home", link: "/" },
+  // { name: "Home", link: "/" },
   {
     name: "Shop",
     link: "/shop",
@@ -33,13 +35,9 @@ export default function Navbar(props) {
     setMobileOpen((prevState) => !prevState);
   };
 
-  const handleBtnClick = (e) => {
-    console.log(e.target);
-  };
-
   const drawer = (
     <Box onClick={handleDrawerToggle}>
-      <Typography variant="h6" sx={{ my: 2 }}>
+      <Typography variant="h6" sx={{ my: 2, textAlign: "center" }}>
         CS464
       </Typography>
       <Divider />
@@ -47,10 +45,18 @@ export default function Navbar(props) {
         {navItems.map((item) => (
           <ListItem key={item.name} disablePadding>
             <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item.name} onClick={handleBtnClick} />
+              <ListItemText
+                primary={item.name}
+                onClick={() => router.push(item.link)}
+              />
             </ListItemButton>
           </ListItem>
         ))}
+        <ListItem disablePadding>
+          <ListItemButton sx={{ textAlign: "center" }}>
+            <ListItemText primary="Cart" onClick={() => router.push("/cart")} />
+          </ListItemButton>
+        </ListItem>
       </List>
     </Box>
   );
@@ -88,6 +94,15 @@ export default function Navbar(props) {
                 {item.name}
               </Button>
             ))}
+            <IconButton color="inherit">
+              <Badge
+                badgeContent={4}
+                color="secondary"
+                onClick={() => router.push("/cart")}
+              >
+                <ShoppingCart />
+              </Badge>
+            </IconButton>
           </Box>
         </Toolbar>
       </AppBar>

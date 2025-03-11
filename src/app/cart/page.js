@@ -7,10 +7,10 @@ import CartList from "@/components/cart/CartList";
 export default function Page() {
   return (
     <Grid2 container spacing={3}>
-      <Grid2 item size={{ xs: 12, md: 8 }}>
+      <Grid2 size={{ xs: 12, md: 8 }}>
         <CartList />
       </Grid2>
-      <Grid2 item size={{ xs: 12, md: 4 }}>
+      <Grid2 size={{ xs: 12, md: 4 }}>
         <CartCheckout />
       </Grid2>
     </Grid2>
