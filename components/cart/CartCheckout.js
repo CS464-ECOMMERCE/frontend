@@ -10,14 +10,16 @@ import {
 } from "@mui/material";
 
 export default function CartCheckout({ loading, items }) {
-  let subtotal = 0
+  let subtotal,
+    tax = 0;
+
   if (!loading) {
     subtotal = Object.entries(items).reduce(
       (acc, [_, item]) => acc + item.price * item.quantity,
       0
     );
+    tax = subtotal * 0.1;
   }
-
   return (
     <>
       {loading ? (
@@ -52,13 +54,13 @@ export default function CartCheckout({ loading, items }) {
           <CardContent className="checkout-cart-content">
             <div className="item">
               <Typography variant="body2">Subtotal</Typography>
-              <Typography variant="body2">$ 36.12</Typography>
+              <Typography variant="body2">$ {subtotal.toFixed(2)}</Typography>
             </div>
           </CardContent>
           <CardContent className="checkout-cart-content">
             <div className="item">
-              <Typography variant="body2">Shipping</Typography>
-              <Typography variant="body2">$ 5.00</Typography>
+              <Typography variant="body2">Tax</Typography>
+              <Typography variant="body2">$ {tax.toFixed(2)}</Typography>
             </div>
           </CardContent>
 
@@ -66,8 +68,10 @@ export default function CartCheckout({ loading, items }) {
 
           <CardContent className="checkout-cart-content">
             <div className="item">
-              <Typography variant="body1">Subtotal</Typography>
-              <Typography variant="body1">$ {subtotal.toFixed(2)}</Typography>
+              <Typography variant="body1">Total</Typography>
+              <Typography variant="body1">
+                $ {(subtotal + tax).toFixed(2)}
+              </Typography>
             </div>
           </CardContent>
 
