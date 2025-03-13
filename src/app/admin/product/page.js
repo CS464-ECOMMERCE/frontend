@@ -1,7 +1,11 @@
 "use client";
 import { GetProductById } from "@/api/product";
+import BackButton from "@/components/BackButton";
+import ProductImages from "@/components/product/gallery/ProductImages";
+import ProductDetails from "@/components/product/ProductDetails";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { imgPlaceholder } from "../../shop/[id]/page";
 
 export default function Page() {
   const [data, setData] = useState({});
@@ -13,14 +17,39 @@ export default function Page() {
     const productId = searchParams.get("product_id");
     if (!productId) {
       router.push("/admin");
+      return;
     }
     const fetchData = async () => {
       const res = await GetProductById(productId);
+      if (!res) {
+        router.push("/shop");
+        return;
+      }
       setData(res);
       setLoading(false);
     };
     fetchData();
   }, []);
 
-  return <>{loading ? <div>Loading...</div> : <div>{data.id}</div>}</>;
+  return (
+    <>
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <div className="flex flex-col gap-5">
+          <div>
+            <BackButton />
+          </div>
+          <div className="flex flex-col sm:flex-row gap-8">
+            <div className="flex-1">
+              <ProductImages images={imgPlaceholder} loading={loading} />
+            </div>
+            <div className="flex-1">
+              <ProductDetails item={data} loading={loading} />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

@@ -6,7 +6,7 @@ import ProductDetails from "@/components/product/ProductDetails";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const imgPlaceholder = [
+export const imgPlaceholder = [
   {
     url: "https://plus.unsplash.com/premium_photo-1704546974012-78acde0d4905?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxfHx8ZW58MHx8fHx8",
     alt: "image",
