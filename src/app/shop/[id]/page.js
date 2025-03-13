@@ -1,6 +1,10 @@
+"use client";
+import { GetProductById } from "@/api/product";
 import BackButton from "@/components/BackButton";
 import ProductImages from "@/components/product/gallery/ProductImages";
 import ProductDetails from "@/components/product/ProductDetails";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const imgPlaceholder = [
   {
@@ -17,17 +21,26 @@ const imgPlaceholder = [
   },
 ];
 
-const productDetails = {
-  title: "Product Title",
-  price: 100,
-  description: "Product Description",
-  sold: 5493,
-  maxQuantity: 10,
-};
-
 export default function Page({ params }) {
+  const router = useRouter();
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
   const { id } = params;
-  console.log(id);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await GetProductById(id);
+
+      if (!res) {
+        router.push("/shop");
+        return;
+      }
+
+      setData(res);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col gap-5">
@@ -36,10 +49,10 @@ export default function Page({ params }) {
       </div>
       <div className="flex flex-col sm:flex-row gap-8">
         <div className="flex-1">
-          <ProductImages images={imgPlaceholder} />
+          <ProductImages images={imgPlaceholder} loading={loading} />
         </div>
         <div className="flex-1">
-          <ProductDetails item={productDetails} />
+          <ProductDetails item={data} loading={loading} />
         </div>
       </div>
     </div>

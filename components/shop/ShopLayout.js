@@ -3,6 +3,7 @@ import { Grid2, Typography } from "@mui/material";
 import ShopCard from "./ShopCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { GetProducts } from "@/api/product";
 
 const imagesPlaceholder = [
   "https://plus.unsplash.com/premium_photo-1741109190036-cbd11154bc65?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
@@ -12,23 +13,27 @@ const imagesPlaceholder = [
 
 export default function ShopLayout({ header }) {
   const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
   const router = useRouter();
   const handleOnClick = (id) => {
     router.push(`/shop/${id}`);
   };
 
   useEffect(() => {
-    // fetch data
-    console.log("fetch data here");
-    setLoading(false);
-  });
+    const fetchData = async () => {
+      const res = await GetProducts();
+      setData(res);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="">
       <div className="header">
         <Typography variant="h3">{header ?? "All Products"}</Typography>
       </div>
-      {loading ? (
+      {loading || data.length === 0 ? (
         <Grid2 container spacing={3}>
           {Array.from({ length: 20 }).map((_, i) => (
             <ShopCard key={i} isLoading={true} />
@@ -36,10 +41,12 @@ export default function ShopLayout({ header }) {
         </Grid2>
       ) : (
         <Grid2 container spacing={3}>
-          {Array.from({ length: 22 }).map((_, i) => (
+          {data.map((item, i) => (
             <ShopCard
               key={i}
-              id={i}
+              id={item.id}
+              title={item.name}
+              price={item.price}
               image={imagesPlaceholder[i % 3]}
               onClick={handleOnClick}
               isLoading={false}

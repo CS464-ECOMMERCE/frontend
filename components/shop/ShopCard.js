@@ -39,7 +39,9 @@ export default function ShopCard({
             {/* <div className="tag-container">
               <ShopTag />
             </div> */}
-            <Typography variant="body2">{price ?? "Price"}</Typography>
+            <Typography variant="body2">
+              $ {price.toFixed(2) ?? "Price"}
+            </Typography>
           </CardContent>
         </Card>
       )}

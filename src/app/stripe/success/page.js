@@ -15,11 +15,11 @@ export default function Page() {
     );
     const data = await res.json();
     setCustomerEmail(data.customer_email);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchSessionStatus();
-    setLoading(false);
   }, []);
 
   if (!loading && !customerEmail) {

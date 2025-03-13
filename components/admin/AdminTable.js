@@ -1,54 +1,88 @@
 "use client";
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Typography } from "@mui/material";
-
-const columns = [
-  { field: "id", headerName: "ID", flex: 1 },
-  { field: "firstName", headerName: "First name", flex: 2 },
-  { field: "lastName", headerName: "Last name", flex: 2 },
-  {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    flex: 1,
-  },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    flex: 4,
-    valueGetter: (value, row) => `${row.firstName || ""} ${row.lastName || ""}`,
-  },
-];
-
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
-
-const paginationModel = { page: 0, pageSize: 10 };
+import { Button, Switch, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { GetProducts } from "@/api/product";
 
 export default function AdminTable() {
+  const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const router = useRouter();
+
+  const paginationModel = { page: 0, pageSize: 10 };
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const products = await GetProducts();
+      setData(products);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  const handleSwitchChange = (params) => {
+    const updatedData = data.map((row) => {
+      if (row.id === params.row.id) {
+        return { ...row, active: !row.active };
+      }
+      return row;
+    });
+    setData(updatedData);
+  };
+
+  const handleEditClick = (params) => {
+    const productId = params.row.id;
+    router.push(`admin/product?product_id=${productId}`);
+  };
+
+  const columns = [
+    { field: "id", headerName: "ID", flex: 1 },
+    { field: "name", headerName: "Product Name", flex: 2 },
+    { field: "price", headerName: "Price", flex: 2 },
+    { field: "quantity", headerName: "Quantity", flex: 2 },
+    {
+      field: "active",
+      headerName: "Active",
+      sortable: false,
+      flex: 2,
+      renderCell: (params) => (
+        <Switch
+          checked={params.row.active}
+          onChange={() => handleSwitchChange(params)}
+          color="primary"
+        />
+      ),
+    },
+    {
+      headerName: "Edit",
+      sortable: false,
+      flex: 2,
+      field: "",
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleEditClick(params)}
+          size="small"
+        >
+          Edit
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <div>
       <div className="header">
         <Typography variant="h3">Admin Page</Typography>
       </div>
       <DataGrid
-        rows={rows}
+        rows={data}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[10, 20]}
-        checkboxSelection
+        rowSelection={false}
         sx={{ border: 0, width: "100%", height: "100%" }}
       />
     </div>

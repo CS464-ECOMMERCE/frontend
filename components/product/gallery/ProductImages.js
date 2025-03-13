@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import { Skeleton } from "@mui/material";
 import "./embla.css";
 import {
   NextButton,
@@ -11,7 +12,7 @@ import {
 import { DotButton, useDotButton } from "./ProductImagesDotButton";
 import { LazyLoadImage } from "./ProductImagesLazyLoadImage";
 
-export default function ProductImages({ images = [] }) {
+export default function ProductImages({ images = [], loading }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay()]);
   const [slidesInView, setSlidesInView] = useState([]);
 
@@ -49,15 +50,24 @@ export default function ProductImages({ images = [] }) {
     <div>
       <div className="embla" ref={emblaRef}>
         <div className="embla__container">
-          {images.map((img, index) => (
-            <LazyLoadImage
-              key={index}
-              index={index}
-              imgSrc={img.url}
-              alt={img.alt}
-              inView={slidesInView.indexOf(index) > -1}
+          {loading ? (
+            <Skeleton
+              variant="rectangular"
+              width={"100%"}
+              height={"50vh"}
+              style={{ margin: "0 10px" }}
             />
-          ))}
+          ) : (
+            images.map((img, index) => (
+              <LazyLoadImage
+                key={index}
+                index={index}
+                imgSrc={img.url}
+                alt={img.alt}
+                inView={slidesInView.indexOf(index) > -1}
+              />
+            ))
+          )}
         </div>
       </div>
       <div className="embla__controls">
