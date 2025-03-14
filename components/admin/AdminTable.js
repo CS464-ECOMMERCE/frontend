@@ -1,7 +1,9 @@
 "use client";
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button, Switch, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
+import { Switch } from "../ui/switch";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { GetProducts } from "@/api/product";
 
@@ -49,24 +51,19 @@ export default function AdminTable() {
       renderCell: (params) => (
         <Switch
           checked={params.row.active}
-          onChange={() => handleSwitchChange(params)}
+          onCheckedChange={() => handleSwitchChange(params)}
           color="primary"
         />
       ),
     },
     {
-      headerName: "Edit",
+      headerName: "",
       sortable: false,
       flex: 2,
       field: "",
       renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleEditClick(params)}
-          size="small"
-        >
-          Edit
+        <Button variant="default" onClick={() => handleEditClick(params)}>
+          View Details
         </Button>
       ),
     },

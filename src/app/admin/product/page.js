@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { imgPlaceholder } from "../../shop/[id]/page";
 import { Button } from "@mui/material";
 import { Edit } from "@mui/icons-material";
+import { EditProductDialog } from "@/components/admin/product/EditProductDialog";
 
 export default function Page() {
   const [data, setData] = useState({});
@@ -41,14 +42,7 @@ export default function Page() {
         <div className="flex flex-col gap-5">
           <div className="flex justify-between">
             <BackButton />
-            <Button
-              startIcon={<Edit />}
-              variant="contained"
-              sx={{ bgcolor: "black" }}
-              onClick={() => router.push("/admin")}
-            >
-              Edit
-            </Button>
+            <EditProductDialog product={data} />
           </div>
           <div className="flex flex-col sm:flex-row gap-8">
             <div className="flex-1">
