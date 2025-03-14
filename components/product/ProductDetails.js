@@ -6,7 +6,7 @@ import ProductTabs from "./ProductTabs";
 import AddToCartButton from "./AddToCartButton";
 import { useState } from "react";
 
-export default function ProductDetails({ item, loading }) {
+export default function ProductDetails({ item, loading, isAdmin }) {
   const { name, sold, price, quantity: maxQuantity } = item;
   const [quantity, setQuantity] = useState(1);
 
@@ -43,17 +43,19 @@ export default function ProductDetails({ item, loading }) {
         <Typography variant="body2" color="gray">
           Unit Price: $ {price.toFixed(2)}
         </Typography>
-        <Typography variant="h4">
-          $ {(price * quantity).toFixed(2)}
-        </Typography>
+        <Typography variant="h4">$ {(price * quantity).toFixed(2)}</Typography>
       </Alert>
       <Typography variant="body1">Quantity: {maxQuantity}</Typography>
-      <ProductQuantitySelector
-        currentQuantity={quantity}
-        maxQuantity={maxQuantity}
-        onQuantityChange={setQuantity}
-      />
-      <AddToCartButton />
+      {isAdmin ? null : (
+        <>
+          <ProductQuantitySelector
+            currentQuantity={quantity}
+            maxQuantity={maxQuantity}
+            onQuantityChange={setQuantity}
+          />
+          <AddToCartButton />
+        </>
+      )}
       <Divider />
       <ProductTabs />
     </div>

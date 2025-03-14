@@ -6,6 +6,8 @@ import ProductDetails from "@/components/product/ProductDetails";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { imgPlaceholder } from "../../shop/[id]/page";
+import { Button } from "@mui/material";
+import { Edit } from "@mui/icons-material";
 
 export default function Page() {
   const [data, setData] = useState({});
@@ -37,15 +39,23 @@ export default function Page() {
         <div>Loading...</div>
       ) : (
         <div className="flex flex-col gap-5">
-          <div>
+          <div className="flex justify-between">
             <BackButton />
+            <Button
+              startIcon={<Edit />}
+              variant="contained"
+              sx={{ bgcolor: "black" }}
+              onClick={() => router.push("/admin")}
+            >
+              Edit
+            </Button>
           </div>
           <div className="flex flex-col sm:flex-row gap-8">
             <div className="flex-1">
               <ProductImages images={imgPlaceholder} loading={loading} />
             </div>
             <div className="flex-1">
-              <ProductDetails item={data} loading={loading} />
+              <ProductDetails item={data} loading={loading} isAdmin={true} />
             </div>
           </div>
         </div>
