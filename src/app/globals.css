@@ -82,13 +82,9 @@ body {
 
 .header {
   display: flex;
-  justify-content: start;
-  align-items: center;
   width: 100%;
   margin: 0 0 1rem 0;
 }
-
-
 
 @layer base {
   :root {
@@ -145,8 +141,6 @@ body {
     --chart-5: 340 75% 55%;
   }
 }
-
-
 
 @layer base {
   * {

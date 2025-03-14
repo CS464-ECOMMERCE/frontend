@@ -6,6 +6,7 @@ import { Switch } from "../ui/switch";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { GetProducts } from "@/api/product";
+import { ProductDialogForm } from "./product/ProductDialogForm";
 
 export default function AdminTable() {
   const [data, setData] = React.useState([]);
@@ -72,8 +73,9 @@ export default function AdminTable() {
 
   return (
     <div>
-      <div className="header">
-        <Typography variant="h3">Admin Page</Typography>
+      <div className="header justify-between items-center">
+        <Typography variant="h4">Admin Page</Typography>
+        <ProductDialogForm isNew={true} />
       </div>
       <DataGrid
         rows={data}
