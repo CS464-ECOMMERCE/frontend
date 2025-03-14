@@ -43,8 +43,8 @@ const fields = [
       }),
   },
   {
-    name: "quantity",
-    label: "Quantity",
+    name: "inventory",
+    label: "Inventory",
     placeholder: "456",
     type: "number",
     validation: z
@@ -64,7 +64,6 @@ const fields = [
   {
     name: "stripe_price_id",
     label: "Stripe Price Id",
-    value: "Hello",
     disabled: true,
     type: "text",
     validation: z.string().optional(),
@@ -84,38 +83,72 @@ const schema = z.object(
   }, {})
 );
 
-const defaultValues = fields.reduce((acc, field) => {
-  if (field.value) {
-    acc[field.name] = field.value;
-    return acc;
-  }
-  acc[field.name] = field.type === "switch" ? false : "";
-  return acc;
-}, {});
-
-export function EditProductDialog() {
+export function ProductDialogForm({ isNew, data }) {
   const [open, setOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const defaultValues = fields.reduce((acc, field) => {
+    // set default values if not new
+    if (!isNew && data[field.name]) {
+      acc[field.name] = data[field.name];
+      return acc;
+    }
+    acc[field.name] = field.type === "switch" ? false : "";
+    return acc;
+  }, {});
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: defaultValues,
   });
 
+  const {
+    formState: { isDirty, dirtyFields },
+  } = form;
+
   function onSubmit(values) {
     // You would typically send the form data to your server here
+
+    if (!isDirty) {
+      closeDialog();
+      return;
+    }
+
+    setSubmitting(true);
     console.log(values);
+    console.log("check if anything has changed", isDirty);
+    console.log("get the field changed", dirtyFields);
+    setSubmitting(false);
+
+    closeDialog();
+  }
+
+  function handleOnOpenChange(e) {
+    if (!e) {
+      closeDialog();
+    } else {
+      setOpen(true);
+    }
+  }
+
+  function closeDialog() {
+    if (submitting) return;
     setOpen(false);
     form.reset();
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(e) => handleOnOpenChange(e)}>
       <DialogTrigger asChild>
-        <Button variant="default">Edit Product</Button>
+        <Button variant="default">
+          {isNew ? "Create New" : "Edit"} Product
+        </Button>
       </DialogTrigger>
       <DialogContent className="md:max-w-[768px]">
         <DialogHeader>
-          <DialogTitle>Edit Product Details</DialogTitle>
+          <DialogTitle>
+            {isNew ? "Create New" : "Edit"} Product Details
+          </DialogTitle>
           <DialogDescription>
             Change how your products display on the page
           </DialogDescription>
@@ -135,11 +168,14 @@ export function EditProductDialog() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setOpen(false)}
+                onClick={closeDialog}
+                disabled={submitting}
               >
                 Cancel
               </Button>
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? "Submitting..." : isNew ? "Create" : "Save"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

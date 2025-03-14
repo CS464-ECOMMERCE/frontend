@@ -5,9 +5,10 @@ import ProductQuantitySelector from "./ProductQuantitySelector";
 import ProductTabs from "./ProductTabs";
 import AddToCartButton from "./AddToCartButton";
 import { useState } from "react";
+import { Switch } from "../ui/switch";
 
 export default function ProductDetails({ item, loading, isAdmin }) {
-  const { name, sold, price, quantity: maxQuantity } = item;
+  const { id, name, sold, price, inventory: maxQuantity, active } = item;
   const [quantity, setQuantity] = useState(1);
 
   if (loading) {
@@ -30,8 +31,8 @@ export default function ProductDetails({ item, loading, isAdmin }) {
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      <Typography variant="h3">{name}</Typography>
+    <div className="flex flex-col gap-5">
+      <Typography variant="h5">{name}</Typography>
       <Divider />{" "}
       {/* <div className="flex items-center gap-5">
         <ShoppingBasket sx={{ color: "gray" }} />
@@ -39,15 +40,30 @@ export default function ProductDetails({ item, loading, isAdmin }) {
           {sold} products sold
         </Typography>
       </div> */}
-      <Alert severity="info" icon={false}>
-        <Typography variant="body2" color="gray">
-          Unit Price: $ {price.toFixed(2)}
-        </Typography>
-        <Typography variant="h4">$ {(price * quantity).toFixed(2)}</Typography>
-      </Alert>
-      <Typography variant="body1">Quantity: {maxQuantity}</Typography>
-      {isAdmin ? null : (
+      {isAdmin ? (
         <>
+          <Alert severity="info" icon={false}>
+            <Typography variant="body2">
+              Unit Price: $ {price.toFixed(2)}
+            </Typography>
+          </Alert>
+          <Typography variant="body2">Inventory: {maxQuantity}</Typography>
+          <div className="flex items-center gap-5">
+            <Typography variant="body2">Product on display: </Typography>
+            <Switch checked={active} color="primary" disabled />
+          </div>
+        </>
+      ) : (
+        <>
+          <Alert severity="info" icon={false}>
+            <Typography variant="body2" color="gray">
+              Unit Price: $ {price.toFixed(2)}
+            </Typography>
+            <Typography variant="h6">
+              $ {(price * quantity).toFixed(2)}
+            </Typography>
+          </Alert>
+          <Typography variant="body2">Quantity: {maxQuantity}</Typography>
           <ProductQuantitySelector
             currentQuantity={quantity}
             maxQuantity={maxQuantity}
@@ -56,6 +72,9 @@ export default function ProductDetails({ item, loading, isAdmin }) {
           <AddToCartButton />
         </>
       )}
+      <Typography variant="body2" color="gray">
+        SKU: {id}
+      </Typography>
       <Divider />
       <ProductTabs />
     </div>

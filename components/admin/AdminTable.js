@@ -42,7 +42,7 @@ export default function AdminTable() {
     { field: "id", headerName: "ID", flex: 1 },
     { field: "name", headerName: "Product Name", flex: 2 },
     { field: "price", headerName: "Price", flex: 2 },
-    { field: "quantity", headerName: "Quantity", flex: 2 },
+    { field: "inventory", headerName: "Inventory", flex: 2 },
     {
       field: "active",
       headerName: "Active",
@@ -50,6 +50,7 @@ export default function AdminTable() {
       flex: 2,
       renderCell: (params) => (
         <Switch
+          disabled
           checked={params.row.active}
           onCheckedChange={() => handleSwitchChange(params)}
           color="primary"
@@ -80,7 +81,11 @@ export default function AdminTable() {
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[10, 20]}
         rowSelection={false}
-        sx={{ border: 0, width: "100%", height: "100%" }}
+        sx={{
+          border: 0,
+          width: "100%",
+          height: "100%",
+        }}
       />
     </div>
   );

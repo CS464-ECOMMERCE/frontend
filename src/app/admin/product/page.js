@@ -6,9 +6,7 @@ import ProductDetails from "@/components/product/ProductDetails";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { imgPlaceholder } from "../../shop/[id]/page";
-import { Button } from "@mui/material";
-import { Edit } from "@mui/icons-material";
-import { EditProductDialog } from "@/components/admin/product/EditProductDialog";
+import { ProductDialogForm } from "@/components/admin/product/ProductDialogForm";
 
 export default function Page() {
   const [data, setData] = useState({});
@@ -42,9 +40,9 @@ export default function Page() {
         <div className="flex flex-col gap-5">
           <div className="flex justify-between">
             <BackButton />
-            <EditProductDialog product={data} />
+            <ProductDialogForm data={data} isNew={false} />
           </div>
-          <div className="flex flex-col sm:flex-row gap-8">
+          <div className="flex flex-col md:flex-row gap-8">
             <div className="flex-1">
               <ProductImages images={imgPlaceholder} loading={loading} />
             </div>
