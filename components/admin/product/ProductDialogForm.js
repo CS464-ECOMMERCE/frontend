@@ -18,6 +18,8 @@ import {
 import { Form } from "@/components/ui/form";
 import CustomTextField from "@/components/custominput/CustomTextField";
 import CustomSwitch from "@/components/custominput/CustomSwitch";
+import { Alert, Typography } from "@mui/material";
+import { CreateProduct, UpdateProductById } from "@/api/product";
 
 const fields = [
   {
@@ -65,6 +67,7 @@ const fields = [
     name: "stripe_price_id",
     label: "Stripe Price Id",
     disabled: true,
+    placeholder: "Field is automatically generated",
     type: "text",
     validation: z.string().optional(),
   },
@@ -83,9 +86,10 @@ const schema = z.object(
   }, {})
 );
 
-export function ProductDialogForm({ isNew, data }) {
+export function ProductDialogForm({ isNew, data, updateParentData }) {
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const defaultValues = fields.reduce((acc, field) => {
     // set default values if not new
@@ -106,20 +110,30 @@ export function ProductDialogForm({ isNew, data }) {
     formState: { isDirty, dirtyFields },
   } = form;
 
-  function onSubmit(values) {
-    // You would typically send the form data to your server here
-
+  async function onSubmit(values) {
     if (!isDirty) {
       closeDialog();
       return;
     }
 
     setSubmitting(true);
-    console.log(values);
-    console.log("check if anything has changed", isDirty);
-    console.log("get the field changed", dirtyFields);
-    setSubmitting(false);
 
+    let result;
+
+    if (isNew) {
+      result = await CreateProduct(values);
+    } else {
+      result = await UpdateProductById(data.id, values);
+    }
+
+    if (![200, 201].includes(result.status)) {
+      setError("Failed to update product");
+      setSubmitting(false);
+      return;
+    }
+
+    updateParentData(result.data);
+    setSubmitting(false);
     closeDialog();
   }
 
@@ -134,6 +148,7 @@ export function ProductDialogForm({ isNew, data }) {
   function closeDialog() {
     if (submitting) return;
     setOpen(false);
+    setError(null);
     form.reset();
   }
 
@@ -147,7 +162,9 @@ export function ProductDialogForm({ isNew, data }) {
       <DialogContent className="md:max-w-[768px]">
         <DialogHeader>
           <DialogTitle>
-            {isNew ? "Create New" : "Edit"} Product Details
+            <Typography variant="subtitle2">
+              {isNew ? "Create New" : "Edit"} Product Details
+            </Typography>
           </DialogTitle>
           <DialogDescription>
             Change how your products display on the page
@@ -164,6 +181,15 @@ export function ProductDialogForm({ isNew, data }) {
                 )}
               </div>
             ))}
+            {error && (
+              <DialogDescription>
+                <Alert severity="error" className="flex items-center">
+                  <Typography variant="body2" color="red">
+                    {error}
+                  </Typography>
+                </Alert>
+              </DialogDescription>
+            )}
             <DialogFooter>
               <Button
                 type="button"

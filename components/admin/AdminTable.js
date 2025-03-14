@@ -71,11 +71,15 @@ export default function AdminTable() {
     },
   ];
 
+  const updateData = (newData) => {
+    setData((prev) => [...prev, newData]);
+  };
+
   return (
     <div>
       <div className="header justify-between items-center">
         <Typography variant="h4">Admin Page</Typography>
-        <ProductDialogForm isNew={true} />
+        <ProductDialogForm isNew={true} updateParentData={updateData} />
       </div>
       <DataGrid
         rows={data}
@@ -83,6 +87,7 @@ export default function AdminTable() {
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[10, 20]}
         rowSelection={false}
+        getRowId={(row) => row.id}
         sx={{
           border: 0,
           width: "100%",

@@ -11,6 +11,7 @@ import { ProductDialogForm } from "@/components/admin/product/ProductDialogForm"
 export default function Page() {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [formKey, setFormKey] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -32,6 +33,11 @@ export default function Page() {
     fetchData();
   }, []);
 
+  const updateData = (newData) => {
+    setData((prev) => ({ ...prev, ...newData }));
+    setFormKey((prev) => !prev);
+  };
+
   return (
     <>
       {loading ? (
@@ -40,7 +46,12 @@ export default function Page() {
         <div className="flex flex-col gap-5">
           <div className="flex justify-between">
             <BackButton />
-            <ProductDialogForm data={data} isNew={false} />
+            <ProductDialogForm
+              key={formKey}
+              data={data}
+              updateParentData={updateData}
+              isNew={false}
+            />
           </div>
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex-1">

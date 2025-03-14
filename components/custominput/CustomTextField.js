@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import {
   FormControl,
   FormField,
@@ -10,7 +11,9 @@ import { Input } from "../ui/input";
 export default function CustomTextField({ item, form }) {
   const onValueChange = (e, field) => {
     const value =
-      item.type === "number" ? parseFloat(e.target?.value ?? 0) : e.target.value;
+      item.type === "number"
+        ? parseFloat(e.target?.value ?? 0)
+        : e.target.value;
     field.onChange({ target: { value } });
   };
 
@@ -20,7 +23,9 @@ export default function CustomTextField({ item, form }) {
       name={item.name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{item.label}</FormLabel>
+          <FormLabel>
+            <Typography variant="body2">{item.label}</Typography>
+          </FormLabel>
           <FormControl>
             <Input
               type={item.type ?? "text"}

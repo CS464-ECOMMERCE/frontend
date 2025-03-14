@@ -34,7 +34,7 @@ export default function ShopCard({
             title="Coffee"
           />
           <CardContent className="content">
-            <Typography variant="h5">{title ?? "Title"}</Typography>
+            <Typography variant="subtitle2">{title ?? "Title"}</Typography>
             {/* <Divider /> */}
             {/* <div className="tag-container">
               <ShopTag />

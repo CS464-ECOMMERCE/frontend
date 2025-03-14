@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import { FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { Switch } from "../ui/switch";
 
@@ -8,7 +9,9 @@ export default function CustomSwitch({ item, form }) {
       name={item.name}
       render={({ field }) => (
         <FormItem className="flex flex-col gap-1">
-          <FormLabel>{item.label}</FormLabel>
+          <FormLabel>
+            <Typography variant="body2">{item.label}</Typography>
+          </FormLabel>
           <FormControl>
             <Switch
               disabled={item.disabled}

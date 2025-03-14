@@ -3,7 +3,7 @@ import { Grid2, Typography } from "@mui/material";
 import ShopCard from "./ShopCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { GetProducts } from "@/api/product";
+import { GetActiveProducts } from "@/api/product";
 
 const imagesPlaceholder = [
   "https://plus.unsplash.com/premium_photo-1741109190036-cbd11154bc65?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
@@ -21,7 +21,7 @@ export default function ShopLayout({ header }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await GetProducts();
+      const res = await GetActiveProducts();
       setData(res);
       setLoading(false);
     };
