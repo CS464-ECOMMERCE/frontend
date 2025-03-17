@@ -69,7 +69,7 @@ export default function ProductDetails({ item, loading, isAdmin }) {
             maxQuantity={maxQuantity}
             onQuantityChange={setQuantity}
           />
-          <AddToCartButton />
+          <AddToCartButton id={item.id} quantity={quantity} />
         </>
       )}
       <Typography variant="body2" color="gray">

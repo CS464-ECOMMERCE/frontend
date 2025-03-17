@@ -11,7 +11,7 @@ import ProductQuantitySelector from "../product/ProductQuantitySelector";
 import { useEffect, useState } from "react";
 
 export default function CartCard({ loading, item, setItem }) {
-  const { price, maxQuantity, title } = item ?? {};
+  const { price, inventory, name } = item ?? {};
 
   const [quantity, setQuantity] = useState(item?.quantity ?? 1);
 
@@ -64,7 +64,7 @@ export default function CartCard({ loading, item, setItem }) {
             <div className="content-container">
               <div className="details">
                 <div>
-                  <Typography variant="body1">{title ?? "Title"}</Typography>
+                  <Typography variant="body1">{name ?? "Name"}</Typography>
                   <Typography variant="body2" sx={{ color: "gray" }}>
                     Unit Price: $ {price.toFixed(2) ?? 34.12}
                   </Typography>
@@ -72,7 +72,7 @@ export default function CartCard({ loading, item, setItem }) {
 
                 <ProductQuantitySelector
                   currentQuantity={quantity}
-                  maxQuantity={maxQuantity}
+                  maxQuantity={inventory}
                   onQuantityChange={setQuantity}
                 />
               </div>

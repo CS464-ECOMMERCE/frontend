@@ -16,6 +16,7 @@ import Button from "@mui/material/Button";
 import { useRouter } from "next/navigation";
 import { ShoppingCart } from "@mui/icons-material";
 import { Badge } from "@mui/material";
+import CartTrolleyButton from "./cart/CartTrolleyButton";
 
 const drawerWidth = 240;
 const navItems = [
@@ -94,15 +95,7 @@ export default function Navbar(props) {
                 {item.name}
               </Button>
             ))}
-            <IconButton color="inherit">
-              <Badge
-                badgeContent={4}
-                color="secondary"
-                onClick={() => router.push("/cart")}
-              >
-                <ShoppingCart />
-              </Badge>
-            </IconButton>
+            <CartTrolleyButton />
           </Box>
         </Toolbar>
       </AppBar>
