@@ -1,5 +1,7 @@
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 async function GetProducts() {
-  const res = await fetch("http://localhost:3001/products");
+  const res = await fetch(`${backendUrl}/products`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch products");
@@ -13,7 +15,7 @@ async function GetProductsPaginated(page, pageSize) {
   console.log("pagination called");
   const start = page * pageSize;
   const res = await fetch(
-    `http://localhost:3001/products?_start=${start}&_limit=${pageSize}`
+    `${backendUrl}/products?_start=${start}&_limit=${pageSize}`
   );
 
   if (!res.ok) {
@@ -25,7 +27,7 @@ async function GetProductsPaginated(page, pageSize) {
 }
 
 async function GetActiveProducts() {
-  const res = await fetch("http://localhost:3001/products?active=true");
+  const res = await fetch(`${backendUrl}/products?active=true`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch active products");
@@ -35,8 +37,21 @@ async function GetActiveProducts() {
   return data;
 }
 
+async function GetActiveProductsPaginated(page, pageSize) {
+  const start = page * pageSize;
+  const res = await fetch(
+    `${backendUrl}/products?active=true&_start=${start}&_limit=${pageSize}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch active products");
+  }
+  const data = await res.json();
+  return data;
+}
+
 async function GetProductById(productId) {
-  const res = await fetch(`http://localhost:3001/products/${productId}`);
+  const res = await fetch(`${backendUrl}/products/${productId}`);
 
   if (!res.ok) {
     throw new Error(`Failed to fetch product with ID ${productId}`);
@@ -47,7 +62,7 @@ async function GetProductById(productId) {
 }
 
 async function UpdateProductById(productId, productData) {
-  const res = await fetch(`http://localhost:3001/products/${productId}`, {
+  const res = await fetch(`${backendUrl}/products/${productId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -64,7 +79,7 @@ async function UpdateProductById(productId, productData) {
 }
 
 async function CreateProduct(productData) {
-  const res = await fetch("http://localhost:3001/products", {
+  const res = await fetch(`${backendUrl}/products`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -84,6 +99,7 @@ export {
   GetProducts,
   GetProductsPaginated,
   GetActiveProducts,
+  GetActiveProductsPaginated,
   GetProductById,
   UpdateProductById,
   CreateProduct,

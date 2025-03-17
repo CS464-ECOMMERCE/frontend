@@ -1,18 +1,10 @@
 "use client";
-import { Grid2, Typography } from "@mui/material";
+import { Grid2, Typography, Pagination, Select, MenuItem } from "@mui/material";
 import ShopCard from "./ShopCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { GetActiveProducts } from "@/api/product";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "../ui/pagination";
+import { GetActiveProducts, GetActiveProductsPaginated } from "@/api/product";
+import CustomPagination from "../CustomPagination";
 
 const imagesPlaceholder = [
   "https://plus.unsplash.com/premium_photo-1741109190036-cbd11154bc65?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
@@ -28,14 +20,36 @@ export default function ShopLayout({ header }) {
     router.push(`/shop/${id}`);
   };
 
+  // data for pagination
+  const [page, setPage] = useState(1);
+  const itemPerPageValues = [20, 50, 100];
+  const [itemPerPage, setItemPerPage] = useState(itemPerPageValues[0]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
   useEffect(() => {
     const fetchData = async () => {
-      const res = await GetActiveProducts();
-      setData(res);
+      setLoading(true);
+      const [allProducts, paginatedProducts] = await Promise.all([
+        GetActiveProducts(),
+        GetActiveProductsPaginated(0, itemPerPage),
+      ]);
+      setTotalItems(allProducts.length);
+      setTotalPages(Math.ceil(allProducts.length / itemPerPage));
+      setData(paginatedProducts);
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [itemPerPage, page]);
+
+  const updateItemPerPage = (newValue) => {
+    setItemPerPage(newValue);
+    console.log(itemPerPage);
+  };
+
+  const updatePageNumber = (newValue) => {
+    setPage(newValue);
+  };
 
   return (
     <div className="">
@@ -49,7 +63,7 @@ export default function ShopLayout({ header }) {
           ))}
         </Grid2>
       ) : (
-        <>
+        <div className="flex flex-col items-center gap-8">
           <Grid2 container spacing={3}>
             {data.map((item, i) => (
               <ShopCard
@@ -63,25 +77,16 @@ export default function ShopLayout({ header }) {
               />
             ))}
           </Grid2>
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious className="text-xl" href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink className="text-xl" href="#">
-                  1
-                </PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext className="text-xl" href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </>
+          <CustomPagination
+            totalItems={totalItems}
+            totalPages={totalPages}
+            currentPage={page}
+            currentPageSize={itemPerPage}
+            onPageChange={updatePageNumber}
+            itemPerPageValues={itemPerPageValues}
+            onItemPerPageChange={updateItemPerPage}
+          />
+        </div>
       )}
     </div>
   );
