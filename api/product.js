@@ -9,6 +9,21 @@ async function GetProducts() {
   return data;
 }
 
+async function GetProductsPaginated(page, pageSize) {
+  console.log("pagination called");
+  const start = page * pageSize;
+  const res = await fetch(
+    `http://localhost:3001/products?_start=${start}&_limit=${pageSize}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch products");
+  }
+
+  const data = await res.json();
+  return data;
+}
+
 async function GetActiveProducts() {
   const res = await fetch("http://localhost:3001/products?active=true");
 
@@ -67,6 +82,7 @@ async function CreateProduct(productData) {
 
 export {
   GetProducts,
+  GetProductsPaginated,
   GetActiveProducts,
   GetProductById,
   UpdateProductById,

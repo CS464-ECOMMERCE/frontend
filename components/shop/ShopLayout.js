@@ -4,6 +4,15 @@ import ShopCard from "./ShopCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { GetActiveProducts } from "@/api/product";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
 
 const imagesPlaceholder = [
   "https://plus.unsplash.com/premium_photo-1741109190036-cbd11154bc65?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
@@ -40,19 +49,39 @@ export default function ShopLayout({ header }) {
           ))}
         </Grid2>
       ) : (
-        <Grid2 container spacing={3}>
-          {data.map((item, i) => (
-            <ShopCard
-              key={i}
-              id={item.id}
-              title={item.name}
-              price={item.price}
-              image={imagesPlaceholder[i % 3]}
-              onClick={handleOnClick}
-              isLoading={false}
-            />
-          ))}
-        </Grid2>
+        <>
+          <Grid2 container spacing={3}>
+            {data.map((item, i) => (
+              <ShopCard
+                key={i}
+                id={item.id}
+                title={item.name}
+                price={item.price}
+                image={imagesPlaceholder[i % 3]}
+                onClick={handleOnClick}
+                isLoading={false}
+              />
+            ))}
+          </Grid2>
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious className="text-xl" href="#" />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink className="text-xl" href="#">
+                  1
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext className="text-xl" href="#" />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </>
       )}
     </div>
   );

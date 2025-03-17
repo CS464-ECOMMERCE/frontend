@@ -5,24 +5,42 @@ import { Typography } from "@mui/material";
 import { Switch } from "../ui/switch";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { GetProducts } from "@/api/product";
+import { GetProducts, GetProductsPaginated } from "@/api/product";
 import { ProductDialogForm } from "./product/ProductDialogForm";
 
 export default function AdminTable() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [paginationModel, setPaginationModel] = React.useState({
+    page: 0,
+    pageSize: 10,
+  });
+  const [rowCount, setRowCount] = React.useState(0);
+  const [rowCountLoading, setRowCountLoading] = React.useState(true);
   const router = useRouter();
-
-  const paginationModel = { page: 0, pageSize: 10 };
 
   React.useEffect(() => {
     const fetchData = async () => {
+      setRowCountLoading(true);
       const products = await GetProducts();
+      setRowCount(products.length);
+      setRowCountLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const products = await GetProductsPaginated(
+        paginationModel.page,
+        paginationModel.pageSize
+      );
       setData(products);
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [paginationModel]);
 
   const handleSwitchChange = (params) => {
     const updatedData = data.map((row) => {
@@ -71,23 +89,30 @@ export default function AdminTable() {
     },
   ];
 
-  const updateData = (newData) => {
+  const addData = (newData) => {
     setData((prev) => [...prev, newData]);
+    setRowCount((prev) => prev + 1);
   };
 
   return (
     <div>
       <div className="header justify-between items-center">
         <Typography variant="h4">Admin Page</Typography>
-        <ProductDialogForm isNew={true} updateParentData={updateData} />
+        <ProductDialogForm isNew={true} updateParentData={addData} />
       </div>
       <DataGrid
         rows={data}
+        rowCount={rowCount}
+        paginationMode="server"
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[10, 20]}
+        pageSizeOptions={[10, 20, 50]}
         rowSelection={false}
         getRowId={(row) => row.id}
+        loading={rowCountLoading || loading}
+        onPaginationModelChange={(params) => {
+          setPaginationModel(params);
+        }}
         sx={{
           border: 0,
           width: "100%",
