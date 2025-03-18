@@ -1,7 +1,7 @@
 import "./globals.css";
-import Navbar from "../../components/Navbar";
-import { Box, ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 import theme from "./theme";
+import AppWrapper from "./_app";
 
 export const metadata = {
   title: "CS464 Ecommerce",
@@ -13,10 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="root-layout">
         <ThemeProvider theme={theme}>
-          <Navbar />
-          <Box component="main" sx={{ p: 3 }} className="display-screen">
-            {children}
-          </Box>
+          <AppWrapper children={children} />
         </ThemeProvider>
       </body>
     </html>
