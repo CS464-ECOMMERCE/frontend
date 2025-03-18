@@ -4,13 +4,13 @@ import { Box } from "@mui/material";
 import { Provider, useDispatch } from "react-redux";
 import store from "./store";
 import { useEffect } from "react";
-import { fetchProducts } from "@/store/productSlice";
+import { fetchCart } from "@/store/cartSlice";
 
 function App({ children }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(fetchCart());
   }, []);
 
   return (

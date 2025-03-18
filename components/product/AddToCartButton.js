@@ -5,11 +5,14 @@ import { Typography } from "@mui/material";
 import { AddItemToCart } from "@/api/cart";
 import CustomSnackbar from "../CustomSnackbar";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addToLocalCart } from "@/store/cartSlice";
 
 export default function AddToCartButton({ id, quantity }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const dispatch = useDispatch();
 
   const handleAddToCart = async () => {
     const res = await AddItemToCart(id, quantity);
@@ -23,6 +26,7 @@ export default function AddToCartButton({ id, quantity }) {
     setSnackbarOpen(true);
     setSnackbarMsg("Item added to cart");
     setSnackbarSeverity("success");
+    dispatch(addToLocalCart({ id, quantity }));
   };
 
   return (

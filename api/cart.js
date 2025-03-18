@@ -60,4 +60,19 @@ async function AddItemToCart(id, quantity) {
   return { status: 200, data };
 }
 
-export { GetCart, GetCartDetails, AddItemToCart };
+async function RemoveItemFromCart(id) {
+  const res = await fetch(`${backendUrl}/cart/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    return {
+      error: "Failed to remove item from cart",
+      status: 400,
+    };
+  }
+
+  return { status: 200 };
+}
+
+export { GetCart, GetCartDetails, AddItemToCart, RemoveItemFromCart };

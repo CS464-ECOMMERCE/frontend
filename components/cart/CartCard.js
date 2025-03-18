@@ -83,7 +83,7 @@ export default function CartCard({ loading, item, setItem }) {
                 </Typography>
 
                 <div className="actions">
-                  <CartDeleteButton />
+                  <CartDeleteButton id={item.id} />
                 </div>
               </div>
             </div>

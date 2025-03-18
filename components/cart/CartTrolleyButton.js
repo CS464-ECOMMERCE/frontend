@@ -1,23 +1,22 @@
 "use client";
-import { GetCart } from "@/api/cart";
 import { ShoppingCart } from "@mui/icons-material";
 import { Badge, IconButton } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function CartTrolleyButton() {
   const router = useRouter();
   const [cartLength, setCartLength] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { items } = useSelector((state) => state.cart);
 
   useEffect(() => {
-    const fetchCart = async () => {
-      const res = await GetCart();
-      setCartLength(res.length);
+    if (items) {
+      setCartLength(items.length);
       setLoading(false);
-    };
-    fetchCart();
-  }, []);
+    }
+  }, [items]);
 
   return (
     <IconButton color="inherit">
