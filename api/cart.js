@@ -4,22 +4,28 @@ async function GetCart() {
   const res = await fetch(`${backendUrl}/cart`);
 
   if (!res.ok) {
-    throw new Error("Failed to fetch cart");
+    return {
+      error: "Failed to fetch cart",
+      status: 400,
+    };
   }
 
   const data = await res.json();
-  return data;
+  return { status: 200, data };
 }
 
 async function GetCartDetails() {
   const cart = await GetCart();
 
   const data = await Promise.all(
-    cart.map(async (item) => {
+    cart.data.map(async (item) => {
       const itemData = await fetch(`${backendUrl}/products/${item.id}`);
 
       if (!itemData.ok) {
-        throw new Error("Failed to fetch product details");
+        return {
+          error: "Failed to fetch product details",
+          status: 400,
+        };
       }
 
       const product = await itemData.json();
@@ -30,7 +36,7 @@ async function GetCartDetails() {
     })
   );
 
-  return data;
+  return { status: 200, data };
 }
 
 async function AddItemToCart(id, quantity) {
@@ -43,10 +49,15 @@ async function AddItemToCart(id, quantity) {
   });
 
   if (!res.ok) {
-    throw new Error("Failed to add item to cart");
+    return {
+      error: "Failed to add item to cart",
+      status: 400,
+    };
   }
 
-  return res.json();
+  const data = await res.json();
+
+  return { status: 200, data };
 }
 
 export { GetCart, GetCartDetails, AddItemToCart };

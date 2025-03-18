@@ -1,15 +1,22 @@
+"use client";
 import { useEffect, useState } from "react";
 import CartCard from "./CartCard";
 import { Box } from "@mui/material";
 import { GetCartDetails } from "@/api/cart";
+import { useRouter } from "next/navigation";
 
 export default function CartList({ loading, updateItems }) {
   const [items, setItems] = useState({});
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await GetCartDetails();
-      const itemsObject = res.reduce(
+      if (res.status !== 200) {
+        router.push(`/400?message=${res.error}`);
+        return;
+      }
+      const itemsObject = res.data.reduce(
         (acc, item) => ((acc[item.id] = item), acc),
         {}
       );
