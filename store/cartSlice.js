@@ -33,9 +33,6 @@ const cartSlice = createSlice({
       const item = action.payload;
       state.items = state.items.filter((i) => i.id !== item.id);
     },
-    // remove: (state, action) => {
-    //   state.items = state.items.filter((item) => item.id !== action.payload);
-    // },
   },
   extraReducers: (builder) => {
     builder

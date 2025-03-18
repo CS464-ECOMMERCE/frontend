@@ -40,13 +40,28 @@ async function GetCartDetails() {
 }
 
 async function AddItemToCart(id, quantity) {
-  const res = await fetch(`${backendUrl}/cart`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id, quantity }),
-  });
+  const allItems = await GetCart();
+  const existingItem = allItems.data.find((item) => item.id === id);
+  let res;
+
+  if (existingItem) {
+    quantity += existingItem.quantity;
+    res = await fetch(`${backendUrl}/cart/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ quantity }),
+    });
+  } else {
+    res = await fetch(`${backendUrl}/cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, quantity }),
+    });
+  }
 
   if (!res.ok) {
     return {

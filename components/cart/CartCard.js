@@ -9,11 +9,15 @@ import {
 import CartDeleteButton from "./CartDeleteButton";
 import ProductQuantitySelector from "../product/ProductQuantitySelector";
 import { useEffect, useState } from "react";
+import { RemoveItemFromCart } from "@/api/cart";
+import { useDispatch } from "react-redux";
+import { removeFromLocalCart } from "@/store/cartSlice";
 
 export default function CartCard({ loading, item, setItem }) {
   const { price, inventory, name } = item ?? {};
 
   const [quantity, setQuantity] = useState(item?.quantity ?? 1);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (item) {
@@ -26,6 +30,18 @@ export default function CartCard({ loading, item, setItem }) {
       }));
     }
   }, [quantity]);
+
+  const handleDeleteClick = async () => {
+    const res = await RemoveItemFromCart(item.id);
+    if (res.status !== 200) {
+      return;
+    }
+    setItem((prev) => {
+      delete prev[item.id];
+      return { ...prev }; // return a new object to trigger re-render
+    });
+    dispatch(removeFromLocalCart({ id: item.id }));
+  };
 
   return (
     <>
@@ -83,7 +99,10 @@ export default function CartCard({ loading, item, setItem }) {
                 </Typography>
 
                 <div className="actions">
-                  <CartDeleteButton id={item.id} />
+                  <CartDeleteButton
+                    id={item.id}
+                    handleOnClick={handleDeleteClick}
+                  />
                 </div>
               </div>
             </div>

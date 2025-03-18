@@ -9,23 +9,29 @@ import { useDispatch } from "react-redux";
 import { addToLocalCart } from "@/store/cartSlice";
 
 export default function AddToCartButton({ id, quantity }) {
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMsg, setSnackbarMsg] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
   const dispatch = useDispatch();
 
   const handleAddToCart = async () => {
     const res = await AddItemToCart(id, quantity);
     if (res.status !== 200) {
-      setSnackbarOpen(true);
-      setSnackbarMsg(res.error);
-      setSnackbarSeverity("error");
+      setSnackbar({
+        open: true,
+        message: res.error,
+        severity: "error",
+      });
       return;
     }
 
-    setSnackbarOpen(true);
-    setSnackbarMsg("Item added to cart");
-    setSnackbarSeverity("success");
+    setSnackbar({
+      open: true,
+      message: "Item added to cart",
+      severity: "success",
+    });
     dispatch(addToLocalCart({ id, quantity }));
   };
 
@@ -37,10 +43,10 @@ export default function AddToCartButton({ id, quantity }) {
       </Button>
 
       <CustomSnackbar
-        open={snackbarOpen}
-        message={snackbarMsg}
-        onClose={() => setSnackbarOpen(false)}
-        severity={snackbarSeverity}
+        open={snackbar.open}
+        message={snackbar.message}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        severity={snackbar.severity}
       />
     </>
   );
