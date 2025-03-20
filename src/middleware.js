@@ -4,7 +4,7 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  // Define protected paths (e.g., all routes under /admin)
+  // If not authenticated, navigate to protected paths
   const protectedPaths = ["/admin"];
 
   const pathname = req.nextUrl.pathname;
@@ -16,7 +16,8 @@ export async function middleware(req) {
     }
   }
 
-  const authPaths = ["/login", "/register"];
+  // If authenticated, prevent access to auth paths
+  const authPaths = ["/login", "/register", "/shop", "/cart"];
   if (authPaths.some((path) => pathname.startsWith(path))) {
     // If user is authenticated, redirect to dashboard
     if (token) {
@@ -27,7 +28,7 @@ export async function middleware(req) {
   return NextResponse.next(); // Continue if authenticated
 }
 
-// Apply middleware to `/admin/*`, `/login`, and `/register` routes
+// Apply middleware to specific paths
 export const config = {
-  matcher: ["/admin/:path*", "/login", "/register"],
+  matcher: ["/admin/:path*", "/login", "/register", "/shop/:path*", "/cart"],
 };

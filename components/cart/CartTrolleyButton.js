@@ -1,9 +1,10 @@
 "use client";
 import { ShoppingCart } from "@mui/icons-material";
-import { Badge, IconButton } from "@mui/material";
+import { Badge } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Button } from "../ui/button";
 
 export default function CartTrolleyButton() {
   const router = useRouter();
@@ -19,18 +20,18 @@ export default function CartTrolleyButton() {
   }, [items]);
 
   return (
-    <IconButton color="inherit">
+    <Button variant="ghost" color="white">
       {loading ? (
-        <ShoppingCart />
+        <ShoppingCart sx={{ scale: 1.5 }} />
       ) : (
         <Badge
           badgeContent={cartLength}
           color="secondary"
           onClick={() => router.push("/cart")}
         >
-          <ShoppingCart />
+          <ShoppingCart sx={{ scale: 1.5 }} />
         </Badge>
       )}
-    </IconButton>
+    </Button>
   );
 }

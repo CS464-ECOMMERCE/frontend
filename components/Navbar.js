@@ -16,15 +16,14 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import CartTrolleyButton from "./cart/CartTrolleyButton";
 import { signOut, useSession } from "next-auth/react";
+import {
+  Login,
+  StoreMallDirectory,
+  Dashboard,
+  Logout,
+} from "@mui/icons-material";
 
 const drawerWidth = 240;
-const navItems = [
-  // { name: "Home", link: "/" },
-  {
-    name: "Shop",
-    link: "/shop",
-  },
-];
 
 export default function Navbar(props) {
   const { window } = props;
@@ -36,6 +35,64 @@ export default function Navbar(props) {
     setMobileOpen((prevState) => !prevState);
   };
 
+  const handleSignout = async () => {
+    const data = await signOut({ redirect: false, callbackUrl: "/login" });
+    if (data) {
+      router.push("/login");
+    }
+  };
+
+  const navItems = [
+    {
+      name: "Shop",
+      link: "/shop",
+      icon: (
+        <Button variant="ghost" color="black">
+          <StoreMallDirectory sx={{ scale: 1.5 }} />
+        </Button>
+      ),
+      show: !session,
+    },
+    {
+      name: "View Cart",
+      link: "/cart",
+      icon: <CartTrolleyButton />,
+      show: !session,
+    },
+    {
+      name: "Login",
+      link: "/login",
+      icon: (
+        <Button variant="ghost" color="black">
+          <Login sx={{ scale: 1.5 }} />
+        </Button>
+      ),
+      show: !session,
+    },
+    {
+      name: "Dashboard",
+      link: "/admin",
+      icon: (
+        <Button variant="ghost" color="black">
+          <Dashboard sx={{ scale: 1.5 }} />
+        </Button>
+      ),
+      show: session,
+    },
+    {
+      name: "Sign out",
+      link: "/login",
+      icon: null,
+      show: session,
+      icon: (
+        <Button variant="ghost" color="black">
+          <Logout sx={{ scale: 1.5 }} />
+        </Button>
+      ),
+      action: handleSignout,
+    },
+  ];
+
   const drawer = (
     <Box onClick={handleDrawerToggle}>
       <Typography variant="h6" sx={{ my: 2, textAlign: "center" }}>
@@ -43,34 +100,28 @@ export default function Navbar(props) {
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item.name} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText
-                primary={item.name}
-                onClick={() => router.push(item.link)}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
-        <ListItem disablePadding>
-          <ListItemButton sx={{ textAlign: "center" }}>
-            <ListItemText primary="Cart" onClick={() => router.push("/cart")} />
-          </ListItemButton>
-        </ListItem>
+        {navItems.map(
+          (item) =>
+            item.show && (
+              <ListItem key={item.name} disablePadding>
+                <ListItemButton
+                  sx={{ textAlign: "center" }}
+                  onClick={
+                    item.action ? item.action : () => router.push(item.link)
+                  }
+                >
+                  {item.icon}
+                  <ListItemText primary={item.name} />
+                </ListItemButton>
+              </ListItem>
+            )
+        )}
       </List>
     </Box>
   );
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
-
-  const handleSignout = async () => {
-    const data = await signOut({ redirect: false, callbackUrl: "/login" });
-    if (data) {
-      router.push("/login");
-    }
-  };
 
   return (
     <>
@@ -92,27 +143,32 @@ export default function Navbar(props) {
           >
             CS464
           </Typography>
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
-              <Button
-                key={item.name}
-                variant="ghost"
-                sx={{ color: "#fff" }}
-                onClick={() => router.push(item.link)}
-              >
-                {item.name}
-              </Button>
-            ))}
-            {session ? (
-              <Button
-                onClick={handleSignout}
-                variant="default"
-                // className="bg-transparent text-white"
-              >
-                Sign out
-              </Button>
-            ) : (
-              <CartTrolleyButton />
+          <Box
+            sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}
+          >
+            {navItems.map(
+              (item) =>
+                item.show && (
+                  <>
+                    {item.name !== "View Cart" ? (
+                      <Button
+                        key={item.name}
+                        variant="ghost"
+                        color="white"
+                        onClick={
+                          item.action
+                            ? item.action
+                            : () => router.push(item.link)
+                        }
+                        startIcon={item.icon}
+                      >
+                        {item.name}
+                      </Button>
+                    ) : (
+                      item.icon
+                    )}
+                  </>
+                )
             )}
           </Box>
         </Toolbar>
