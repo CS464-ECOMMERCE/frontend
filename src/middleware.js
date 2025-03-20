@@ -16,7 +16,7 @@ export async function middleware(req) {
     }
   }
 
-  const authPaths = ["/login", "/signup"];
+  const authPaths = ["/login", "/register"];
   if (authPaths.some((path) => pathname.startsWith(path))) {
     // If user is authenticated, redirect to dashboard
     if (token) {
@@ -27,7 +27,7 @@ export async function middleware(req) {
   return NextResponse.next(); // Continue if authenticated
 }
 
-// Apply middleware to `/admin/*`, `/login`, and `/signup` routes
+// Apply middleware to `/admin/*`, `/login`, and `/register` routes
 export const config = {
-  matcher: ["/admin/:path*", "/login", "/signup"],
+  matcher: ["/admin/:path*", "/login", "/register"],
 };
