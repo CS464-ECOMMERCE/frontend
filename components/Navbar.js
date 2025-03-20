@@ -66,7 +66,10 @@ export default function Navbar(props) {
     window !== undefined ? () => window().document.body : undefined;
 
   const handleSignout = async () => {
-    await signOut({ redirect: false });
+    const data = await signOut({ redirect: false, callbackUrl: "/login" });
+    if (data) {
+      router.push("/login");
+    }
   };
 
   return (
