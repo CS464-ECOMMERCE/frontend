@@ -101,9 +101,9 @@ export default function Navbar(props) {
       <Divider />
       <List>
         {navItems.map(
-          (item) =>
+          (item, index) =>
             item.show && (
-              <ListItem key={item.name} disablePadding>
+              <ListItem key={index} disablePadding>
                 <ListItemButton
                   sx={{ textAlign: "center" }}
                   onClick={
@@ -147,12 +147,11 @@ export default function Navbar(props) {
             sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}
           >
             {navItems.map(
-              (item) =>
+              (item, index) =>
                 item.show && (
-                  <>
+                  <div key={index}>
                     {item.name !== "View Cart" ? (
                       <Button
-                        key={item.name}
                         variant="ghost"
                         color="white"
                         onClick={
@@ -160,14 +159,13 @@ export default function Navbar(props) {
                             ? item.action
                             : () => router.push(item.link)
                         }
-                        startIcon={item.icon}
                       >
                         {item.name}
                       </Button>
                     ) : (
                       item.icon
                     )}
-                  </>
+                  </div>
                 )
             )}
           </Box>
