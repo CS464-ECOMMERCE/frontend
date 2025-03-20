@@ -9,7 +9,7 @@ import {
 import CartDeleteButton from "./CartDeleteButton";
 import ProductQuantitySelector from "../product/ProductQuantitySelector";
 import { useEffect, useState } from "react";
-import { RemoveItemFromCart } from "@/api/cart";
+import { RemoveItemFromCart } from "@/src/app/api/cart";
 import { useDispatch } from "react-redux";
 import { removeFromLocalCart } from "@/store/cartSlice";
 

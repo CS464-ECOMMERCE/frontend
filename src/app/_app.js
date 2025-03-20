@@ -5,6 +5,7 @@ import { Provider, useDispatch } from "react-redux";
 import store from "./store";
 import { useEffect } from "react";
 import { fetchCart } from "@/store/cartSlice";
+import { SessionProvider } from "next-auth/react";
 
 function App({ children }) {
   const dispatch = useDispatch();
@@ -23,10 +24,12 @@ function App({ children }) {
   );
 }
 
-export default function AppWrapper(props) {
+export default function AppWrapper({ children, session }) {
   return (
-    <Provider store={store}>
-      <App {...props} />
-    </Provider>
+    <SessionProvider session={session}>
+      <Provider store={store}>
+        <App children={children} />
+      </Provider>
+    </SessionProvider>
   );
 }

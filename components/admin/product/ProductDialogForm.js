@@ -19,7 +19,7 @@ import { Form } from "@/components/ui/form";
 import CustomTextField from "@/components/custominput/CustomTextField";
 import CustomSwitch from "@/components/custominput/CustomSwitch";
 import { Alert, Typography } from "@mui/material";
-import { CreateProduct, UpdateProductById } from "@/api/product";
+import { CreateProduct, UpdateProductById } from "@/src/app/api/product";
 
 const fields = [
   {

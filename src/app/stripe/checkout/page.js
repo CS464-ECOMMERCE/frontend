@@ -1,5 +1,5 @@
 "use client";
-import { fetchClientSecret, stripePromise } from "@/api/stripe";
+import { fetchClientSecret, stripePromise } from "@/src/app/api/stripe";
 import {
   EmbeddedCheckout,
   EmbeddedCheckoutProvider,

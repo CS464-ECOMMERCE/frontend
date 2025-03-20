@@ -5,7 +5,7 @@ import { Typography } from "@mui/material";
 import { Switch } from "../ui/switch";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { GetProducts, GetProductsPaginated } from "@/api/product";
+import { GetProducts, GetProductsPaginated } from "@/src/app/api/product";
 import { ProductDialogForm } from "./product/ProductDialogForm";
 
 export default function AdminTable() {

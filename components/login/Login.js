@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CustomTextField from "@/components/custominput/CustomTextField";
 import { Card, CardContent } from "@mui/material";
-import { useState } from "react";
-import { LoginWithEmailPassword } from "@/api/auth";
+import { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const fields = [
   {
@@ -37,11 +38,13 @@ const schema = z.object(
 );
 
 export default function Login() {
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const defaultValues = fields.reduce(
     (acc, field) => ({ ...acc, [field.name]: field.value }),
     {}
   );
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -51,9 +54,19 @@ export default function Login() {
   async function onSubmit(values) {
     setLoading(true);
     const { email, password } = values;
-    const response = await LoginWithEmailPassword(email, password);
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
     setLoading(false);
   }
+
+  useEffect(() => {
+    if (session) {
+      router.push("/admin");
+    }
+  }, [session]);
 
   return (
     <Card className="w-full mx-0 sm:w-[70%] sm:mx-auto">

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import CartCard from "./CartCard";
 import { Box } from "@mui/material";
-import { GetCartDetails } from "@/api/cart";
+import { GetCartDetails } from "@/src/app/api/cart";
 import { useRouter } from "next/navigation";
 
 export default function CartList({ loading, updateItems }) {

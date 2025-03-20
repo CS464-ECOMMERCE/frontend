@@ -1,5 +1,5 @@
 "use client";
-import { GetProductById } from "@/api/product";
+import { GetProductById } from "@/src/app/api/product";
 import BackButton from "@/components/BackButton";
 import ProductImages from "@/components/product/gallery/ProductImages";
 import ProductDetails from "@/components/product/ProductDetails";

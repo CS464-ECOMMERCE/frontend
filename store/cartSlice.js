@@ -1,4 +1,4 @@
-import { GetCart } from "@/api/cart";
+import { GetCart } from "@/src/app/api/cart";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const fetchCart = createAsyncThunk(

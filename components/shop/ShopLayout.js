@@ -3,7 +3,7 @@ import { Grid2, Typography, Pagination, Select, MenuItem } from "@mui/material";
 import ShopCard from "./ShopCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { GetActiveProducts, GetActiveProductsPaginated } from "@/api/product";
+import { GetActiveProducts, GetActiveProductsPaginated } from "@/src/app/api/product";
 import CustomPagination from "../CustomPagination";
 
 const imagesPlaceholder = [

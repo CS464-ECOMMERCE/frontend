@@ -12,7 +12,6 @@ async function GetProducts() {
 }
 
 async function GetProductsPaginated(page, pageSize) {
-  console.log("pagination called");
   const start = page * pageSize;
   const res = await fetch(
     `${backendUrl}/products?_start=${start}&_limit=${pageSize}`

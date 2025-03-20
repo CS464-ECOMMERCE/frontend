@@ -12,11 +12,10 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { ShoppingCart } from "@mui/icons-material";
-import { Badge } from "@mui/material";
 import CartTrolleyButton from "./cart/CartTrolleyButton";
+import { signOut, useSession } from "next-auth/react";
 
 const drawerWidth = 240;
 const navItems = [
@@ -31,6 +30,7 @@ export default function Navbar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const router = useRouter();
+  const { data: session } = useSession();
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -65,6 +65,10 @@ export default function Navbar(props) {
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
+  const handleSignout = async () => {
+    await signOut({ redirect: false });
+  };
+
   return (
     <>
       <AppBar component="nav">
@@ -89,13 +93,24 @@ export default function Navbar(props) {
             {navItems.map((item) => (
               <Button
                 key={item.name}
+                variant="ghost"
                 sx={{ color: "#fff" }}
                 onClick={() => router.push(item.link)}
               >
                 {item.name}
               </Button>
             ))}
-            <CartTrolleyButton />
+            {session ? (
+              <Button
+                onClick={handleSignout}
+                variant="default"
+                // className="bg-transparent text-white"
+              >
+                Sign out
+              </Button>
+            ) : (
+              <CartTrolleyButton />
+            )}
           </Box>
         </Toolbar>
       </AppBar>
