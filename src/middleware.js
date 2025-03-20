@@ -1,4 +1,4 @@
-import {  NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function middleware(req) {
@@ -16,10 +16,18 @@ export async function middleware(req) {
     }
   }
 
+  const authPaths = ["/login", "/signup"];
+  if (authPaths.some((path) => pathname.startsWith(path))) {
+    // If user is authenticated, redirect to dashboard
+    if (token) {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
+  }
+
   return NextResponse.next(); // Continue if authenticated
 }
 
-// Apply the middleware ONLY to `/admin/*`
+// Apply middleware to `/admin/*`, `/login`, and `/signup` routes
 export const config = {
-  matcher: "/admin/:path*", // Protects all routes inside /admin/
+  matcher: ["/admin/:path*", "/login", "/signup"],
 };

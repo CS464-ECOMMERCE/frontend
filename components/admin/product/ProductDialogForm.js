@@ -132,7 +132,7 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
       return;
     }
 
-    updateParentData(result.data);
+    updateParentData(values);
     setSubmitting(false);
     closeDialog();
   }
