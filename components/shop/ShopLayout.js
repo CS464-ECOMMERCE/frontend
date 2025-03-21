@@ -3,7 +3,7 @@ import { Grid2, Typography, Pagination, Select, MenuItem } from "@mui/material";
 import ShopCard from "./ShopCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { GetActiveProducts, GetActiveProductsPaginated } from "@/src/app/api/product";
+import { GetProducts, GetProductsPaginated } from "@/src/app/api/product";
 import CustomPagination from "../CustomPagination";
 
 const imagesPlaceholder = [
@@ -41,8 +41,8 @@ export default function ShopLayout({ header }) {
     const fetchData = async () => {
       setLoading(true);
       const [allProducts, paginatedProducts] = await Promise.all([
-        GetActiveProducts(),
-        GetActiveProductsPaginated(page - 1, itemPerPage), // offset by 1 due to the label
+        GetProducts(),
+        GetProductsPaginated(page - 1, itemPerPage), // offset by 1 due to the label
       ]);
       setTotalItems(allProducts.length);
       setTotalPages(Math.ceil(allProducts.length / itemPerPage));

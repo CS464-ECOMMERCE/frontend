@@ -25,30 +25,6 @@ async function GetProductsPaginated(page, pageSize) {
   return data;
 }
 
-async function GetActiveProducts() {
-  const res = await fetch(`${backendUrl}/products?active=true`);
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch active products");
-  }
-
-  const data = await res.json();
-  return data;
-}
-
-async function GetActiveProductsPaginated(page, pageSize) {
-  const start = page * pageSize;
-  const res = await fetch(
-    `${backendUrl}/products?active=true&_start=${start}&_limit=${pageSize}`
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch active products");
-  }
-  const data = await res.json();
-  return data;
-}
-
 async function GetProductById(productId) {
   const res = await fetch(`${backendUrl}/products/${productId}`);
 
@@ -97,8 +73,6 @@ async function CreateProduct(productData) {
 export {
   GetProducts,
   GetProductsPaginated,
-  GetActiveProducts,
-  GetActiveProductsPaginated,
   GetProductById,
   UpdateProductById,
   CreateProduct,

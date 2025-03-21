@@ -71,12 +71,6 @@ const fields = [
     type: "text",
     validation: z.string().optional(),
   },
-  {
-    name: "active",
-    label: "Active",
-    type: "switch",
-    validation: z.boolean().optional(),
-  },
 ];
 
 const schema = z.object(
@@ -161,12 +155,10 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
       </DialogTrigger>
       <DialogContent className="md:max-w-[768px]">
         <DialogHeader>
-          <DialogTitle>
-            <Typography variant="subtitle2">
-              {isNew ? "Create New" : "Edit"} Product Details
-            </Typography>
+          <DialogTitle className="text-3xl">
+            {isNew ? "Create New" : "Edit"} Product Details
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-lg">
             Change how your products display on the page
           </DialogDescription>
         </DialogHeader>

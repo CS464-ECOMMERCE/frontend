@@ -42,16 +42,6 @@ export default function AdminTable() {
     fetchData();
   }, [paginationModel]);
 
-  const handleSwitchChange = (params) => {
-    const updatedData = data.map((row) => {
-      if (row.id === params.row.id) {
-        return { ...row, active: !row.active };
-      }
-      return row;
-    });
-    setData(updatedData);
-  };
-
   const handleEditClick = (params) => {
     const productId = params.row.id;
     router.push(`admin/product?product_id=${productId}`);
@@ -62,20 +52,6 @@ export default function AdminTable() {
     { field: "name", headerName: "Product Name", flex: 2 },
     { field: "price", headerName: "Price", flex: 2 },
     { field: "inventory", headerName: "Inventory", flex: 2 },
-    {
-      field: "active",
-      headerName: "Active",
-      sortable: false,
-      flex: 2,
-      renderCell: (params) => (
-        <Switch
-          disabled
-          checked={params.row.active}
-          onCheckedChange={() => handleSwitchChange(params)}
-          color="primary"
-        />
-      ),
-    },
     {
       headerName: "",
       sortable: false,

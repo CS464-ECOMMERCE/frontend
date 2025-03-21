@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Switch } from "../ui/switch";
 
 export default function ProductDetails({ item, loading, isAdmin }) {
-  const { id, name, sold, price, inventory: maxQuantity, active } = item;
+  const { id, name, price, inventory: maxQuantity } = item;
   const [quantity, setQuantity] = useState(1);
 
   if (loading) {
@@ -50,7 +50,6 @@ export default function ProductDetails({ item, loading, isAdmin }) {
           <Typography variant="body2">Inventory: {maxQuantity}</Typography>
           <div className="flex items-center gap-5">
             <Typography variant="body2">Product on display: </Typography>
-            <Switch checked={active} color="primary" disabled />
           </div>
         </>
       ) : (
