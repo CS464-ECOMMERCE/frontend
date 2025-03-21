@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Tabs, Tab, Box, Typography } from "@mui/material";
 
-export default function BasicTabs() {
+export default function BasicTabs({ description }) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -20,32 +20,7 @@ export default function BasicTabs() {
         some trailing spaces and five leading spaces thrown in for good
       </div>
       <div hidden={value !== 1}>
-        Loren ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-        condimentum purus quis sapien fermentum, nec fermentum nisi condimentum.
-        Nulla facilisi. Sed vel nunc nec nulla tincidunt scelerisque. Nulla
-        facilisi. Sed vel nunc nec nulla tincidunt scelerisque. Nulla facilisi.
-        Sed vel nunc nec nulla tincidunt scelerisque. Nulla facilisi. Sed vel
-        nunc nec nulla tincidunt scelerisque. Nulla facilisi. Sed vel nunc nec
-        nulla tincidunt scelerisque. Nulla facilisi. Sed vel nunc nec nulla
-        tincidunt
-
-        Loren ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-        condimentum purus quis sapien fermentum, nec fermentum nisi condimentum.
-        Nulla facilisi. Sed vel nunc nec nulla tincidunt scelerisque. Nulla
-        facilisi. Sed vel nunc nec nulla tincidunt scelerisque. Nulla facilisi.
-        Sed vel nunc nec nulla tincidunt scelerisque. Nulla facilisi. Sed vel
-        nunc nec nulla tincidunt scelerisque. Nulla facilisi. Sed vel nunc nec
-        nulla tincidunt scelerisque. Nulla facilisi. Sed vel nunc nec nulla
-        tincidunt
-
-        Loren ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-        condimentum purus quis sapien fermentum, nec fermentum nisi condimentum.
-        Nulla facilisi. Sed vel nunc nec nulla tincidunt scelerisque. Nulla
-        facilisi. Sed vel nunc nec nulla tincidunt scelerisque. Nulla facilisi.
-        Sed vel nunc nec nulla tincidunt scelerisque. Nulla facilisi. Sed vel
-        nunc nec nulla tincidunt scelerisque. Nulla facilisi. Sed vel nunc nec
-        nulla tincidunt scelerisque. Nulla facilisi. Sed vel nunc nec nulla
-        tincidunt
+        {description || "No description for this product. Come again later."}
       </div>
     </div>
   );

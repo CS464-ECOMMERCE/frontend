@@ -2,45 +2,55 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Typography } from "@mui/material";
-import { Switch } from "../ui/switch";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { GetProducts, GetProductsPaginated } from "@/src/app/api/product";
+import { GetProductsPaginated } from "@/src/app/api/product";
 import { ProductDialogForm } from "./product/ProductDialogForm";
 
 export default function AdminTable() {
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState({});
   const [loading, setLoading] = React.useState(true);
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: 10,
   });
   const [rowCount, setRowCount] = React.useState(0);
-  const [rowCountLoading, setRowCountLoading] = React.useState(true);
   const router = useRouter();
+  const [cursor, setCursor] = React.useState(0);
 
   React.useEffect(() => {
     const fetchData = async () => {
-      setRowCountLoading(true);
-      const products = await GetProducts();
-      setRowCount(products.length);
-      setRowCountLoading(false);
-    };
-    fetchData();
-  }, []);
+      if (data[paginationModel.page]) {
+        return;
+      }
 
-  React.useEffect(() => {
-    const fetchData = async () => {
       setLoading(true);
-      const products = await GetProductsPaginated(
-        paginationModel.page,
-        paginationModel.pageSize
+      const lastCursor = paginationModel.page > 0 ? cursor : 0;
+      const { status, data: res } = await GetProductsPaginated(
+        paginationModel.pageSize,
+        lastCursor
       );
-      setData(products);
+
+      if (status !== 200) {
+        router.push("/400");
+        return;
+      }
+      setData((prev) => ({
+        ...prev,
+        [paginationModel.page]: { products: res.products },
+      }));
+      setRowCount(res.total);
+      setCursor(res.cursor);
       setLoading(false);
     };
     fetchData();
   }, [paginationModel]);
+
+  React.useEffect(() => {
+    setData({});
+    setCursor(0);
+    setPaginationModel((prev) => ({ ...prev, page: 0 })); // reset page to 0 when page size changes
+  }, [paginationModel.pageSize]);
 
   const handleEditClick = (params) => {
     const productId = params.row.id;
@@ -66,7 +76,20 @@ export default function AdminTable() {
   ];
 
   const addData = (newData) => {
-    setData((prev) => [...prev, newData]);
+    const lastKey = Object.keys(data).length - 1;
+
+    // add new data to the (loaded) last page if it's not full
+    // purpose is to reduce the number of API calls
+    if (data[lastKey].products.length < paginationModel.pageSize) {
+      setData((prev) => ({
+        ...prev,
+        [lastKey]: {
+          ...prev[lastKey],
+          products: [...prev[lastKey].products, newData],
+        },
+      }));
+    }
+
     setRowCount((prev) => prev + 1);
   };
 
@@ -77,15 +100,15 @@ export default function AdminTable() {
         <ProductDialogForm isNew={true} updateParentData={addData} />
       </div>
       <DataGrid
-        rows={data}
+        rows={data[paginationModel.page]?.products || []}
         rowCount={rowCount}
         paginationMode="server"
         columns={columns}
-        initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[10, 20, 50]}
         rowSelection={false}
         getRowId={(row) => row.id}
-        loading={rowCountLoading || loading}
+        loading={loading}
+        paginationModel={paginationModel}
         onPaginationModelChange={(params) => {
           setPaginationModel(params);
         }}

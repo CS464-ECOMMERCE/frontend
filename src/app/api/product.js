@@ -1,7 +1,7 @@
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 async function GetProducts() {
-  const res = await fetch(`${backendUrl}/products`);
+  const res = await fetch(`${backendUrl}/product`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch products");
@@ -11,63 +11,81 @@ async function GetProducts() {
   return data;
 }
 
-async function GetProductsPaginated(page, pageSize) {
-  const start = page * pageSize;
-  const res = await fetch(
-    `${backendUrl}/products?_start=${start}&_limit=${pageSize}`
-  );
+async function GetProductsPaginated(pageSize, cursor) {
+  let url;
+  if (cursor) {
+    url = `${backendUrl}/product?limit=${pageSize}&cursor=${cursor}`;
+  } else {
+    url = `${backendUrl}/product?limit=${pageSize}`;
+  }
+
+  const res = await fetch(url);
 
   if (!res.ok) {
-    throw new Error("Failed to fetch products");
+    return { status: 400, error: "Failed to fetch products" };
   }
 
   const data = await res.json();
-  return data;
+  return { status: 200, data };
 }
 
 async function GetProductById(productId) {
-  const res = await fetch(`${backendUrl}/products/${productId}`);
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch product with ID ${productId}`);
-  }
+  const res = await fetch(`${backendUrl}/product/${productId}`);
 
   const data = await res.json();
-  return data;
+
+  if (!res.ok) {
+    return {
+      status: 400,
+      error: `Failed to fetch product with ID: ${data.error}`,
+    };
+  }
+
+  return { status: 200, data };
 }
 
-async function UpdateProductById(productId, productData) {
-  const res = await fetch(`${backendUrl}/products/${productId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(productData),
-  });
+async function UpdateProductById(updateData) {
+  try {
+    const res = await fetch(`${backendUrl}/product`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateData),
+      credentials: "include",
+    });
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(`Failed to update product with ID ${productId}`);
+    if (!res.ok) {
+      throw new Error(`Failed to update product with ID ${updateData.id}`);
+    }
+
+    return { status: res.status, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
   }
-
-  const data = await res.json();
-  return { status: res.status, ...data };
 }
 
 async function CreateProduct(productData) {
-  const res = await fetch(`${backendUrl}/products`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(productData),
-  });
+  try {
+    const res = await fetch(`${backendUrl}/product`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(productData),
+      credentials: "include",
+    });
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error("Failed to create product");
+    if (!res.ok) {
+      throw new Error("Failed to create product");
+    }
+
+    return { status: 201, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
   }
-
-  const data = await res.json();
-  return { status: res.status, data };
 }
 
 export {

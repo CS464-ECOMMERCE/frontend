@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -89,9 +89,9 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
     // set default values if not new
     if (!isNew && data[field.name]) {
       acc[field.name] = data[field.name];
-      return acc;
+    } else {
+      acc[field.name] = field.type === "switch" ? false : "";
     }
-    acc[field.name] = field.type === "switch" ? false : "";
     return acc;
   }, {});
 
@@ -99,6 +99,12 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
     resolver: zodResolver(schema),
     defaultValues: defaultValues,
   });
+
+  useEffect(() => {
+    if (!isNew && data) {
+      form.reset(data);
+    }
+  }, [data, isNew, form]);
 
   const {
     formState: { isDirty, dirtyFields },
@@ -117,7 +123,15 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
     if (isNew) {
       result = await CreateProduct(values);
     } else {
-      result = await UpdateProductById(data.id, values);
+      // only update dirty fields
+      const updateData = Object.keys(dirtyFields).reduce(
+        (acc, key) => {
+          acc[key] = values[key];
+          return acc;
+        },
+        { id: data.id }
+      );
+      result = await UpdateProductById(updateData);
     }
 
     if (![200, 201].includes(result.status)) {
@@ -126,7 +140,7 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
       return;
     }
 
-    updateParentData(values);
+    updateParentData(result.data);
     setSubmitting(false);
     closeDialog();
   }

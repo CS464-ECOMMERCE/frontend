@@ -22,8 +22,8 @@ export default function AdminProductDetailPage() {
       return;
     }
     const fetchData = async () => {
-      const res = await GetProductById(productId);
-      if (!res) {
+      const { status, data: res } = await GetProductById(productId);
+      if (status !== 200) {
         router.push("/shop");
         return;
       }
@@ -40,29 +40,26 @@ export default function AdminProductDetailPage() {
 
   return (
     <>
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="flex flex-col gap-5">
-          <div className="flex justify-between">
-            <BackButton />
-            <ProductDialogForm
-              key={formKey}
-              data={data}
-              updateParentData={updateData}
-              isNew={false}
-            />
+      <div className="flex flex-col gap-5">
+        <div className="flex justify-between">
+          <BackButton />
+          <ProductDialogForm
+            key={formKey}
+            data={data}
+            updateParentData={updateData}
+            isNew={false}
+          />
+        </div>
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="flex-1">
+            <ProductImages images={imgPlaceholder} loading={loading} />
           </div>
-          <div className="flex flex-col md:flex-row gap-8">
-            <div className="flex-1">
-              <ProductImages images={imgPlaceholder} loading={loading} />
-            </div>
-            <div className="flex-1">
-              <ProductDetails item={data} loading={loading} isAdmin={true} />
-            </div>
+          <div className="flex-1">
+            <ProductDetails item={data} loading={loading} isAdmin={true} />
           </div>
         </div>
-      )}
+      </div>
+     
     </>
   );
 }

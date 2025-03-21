@@ -1,14 +1,12 @@
 "use client";
-import { ShoppingBasket } from "@mui/icons-material";
 import { Alert, Divider, Skeleton, Typography } from "@mui/material";
 import ProductQuantitySelector from "./ProductQuantitySelector";
 import ProductTabs from "./ProductTabs";
 import AddToCartButton from "./AddToCartButton";
 import { useState } from "react";
-import { Switch } from "../ui/switch";
 
 export default function ProductDetails({ item, loading, isAdmin }) {
-  const { id, name, price, inventory: maxQuantity } = item;
+  const { id, name, price, inventory: maxQuantity, description } = item;
   const [quantity, setQuantity] = useState(1);
 
   if (loading) {
@@ -23,7 +21,6 @@ export default function ProductDetails({ item, loading, isAdmin }) {
         <Skeleton variant="rectangular" width="100%" height={80} />
         <Skeleton variant="text" width={100} height={30} />
         <Skeleton variant="rectangular" width="100%" height={50} />
-        <Skeleton variant="rectangular" width="100%" height={50} />
         <Divider />
         <Skeleton variant="rectangular" width="100%" height={200} />
       </div>
@@ -34,12 +31,6 @@ export default function ProductDetails({ item, loading, isAdmin }) {
     <div className="flex flex-col gap-5">
       <Typography variant="h5">{name}</Typography>
       <Divider />{" "}
-      {/* <div className="flex items-center gap-5">
-        <ShoppingBasket sx={{ color: "gray" }} />
-        <Typography variant="normal" color="gray">
-          {sold} products sold
-        </Typography>
-      </div> */}
       {isAdmin ? (
         <>
           <Alert severity="info" icon={false}>
@@ -48,9 +39,6 @@ export default function ProductDetails({ item, loading, isAdmin }) {
             </Typography>
           </Alert>
           <Typography variant="body2">Inventory: {maxQuantity}</Typography>
-          <div className="flex items-center gap-5">
-            <Typography variant="body2">Product on display: </Typography>
-          </div>
         </>
       ) : (
         <>
@@ -75,7 +63,7 @@ export default function ProductDetails({ item, loading, isAdmin }) {
         SKU: {id}
       </Typography>
       <Divider />
-      <ProductTabs />
+      <ProductTabs description={description} />
     </div>
   );
 }
