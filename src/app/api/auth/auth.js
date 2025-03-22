@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { cookies } from "next/headers";
+import { addTokenCookie, removeTokenCookies } from "../authCookie";
 
 // Need to import and pass this
 // to `NextAuth` in `app/api/auth[...nextauth]/route.js`
@@ -30,14 +30,7 @@ export const config = {
             throw new Error("Token missing in response");
           }
 
-          const tokenExpire = 60 * 60 * 24;
-          cookies().set("token", data.token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: tokenExpire,
-          });
-          console.log("cookies set");
+          addTokenCookie(data.token);
 
           return { token: data.token, user: { email: credentials.email } };
         } catch (error) {
@@ -64,8 +57,7 @@ export const config = {
   },
   events: {
     async signOut() {
-      cookies().delete("token");
-      console.log("cookies removed");
+      removeTokenCookies();
     },
   },
 };
