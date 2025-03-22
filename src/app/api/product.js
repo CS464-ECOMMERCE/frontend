@@ -1,16 +1,5 @@
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-async function GetProducts() {
-  const res = await fetch(`${backendUrl}/product`);
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch products");
-  }
-
-  const data = await res.json();
-  return data;
-}
-
 async function GetProductsPaginated(pageSize, cursor) {
   let url;
   if (cursor) {
@@ -19,29 +8,61 @@ async function GetProductsPaginated(pageSize, cursor) {
     url = `${backendUrl}/product?limit=${pageSize}`;
   }
 
-  const res = await fetch(url);
+  try {
+    const res = await fetch(url);
 
-  if (!res.ok) {
-    return { status: 400, error: "Failed to fetch products" };
+    if (!res.ok) {
+      return { status: 400, error: "Failed to fetch products" };
+    }
+
+    const data = await res.json();
+    return { status: 200, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
+  }
+}
+
+async function GetMerchantProducts(pageSize, cursor) {
+  let url;
+  if (cursor) {
+    url = `${backendUrl}/product/merchant?limit=${pageSize}&cursor=${cursor}`;
+  } else {
+    url = `${backendUrl}/product/merchant?limit=${pageSize}`;
   }
 
-  const data = await res.json();
-  return { status: 200, data };
+  try {
+    const res = await fetch(url, {
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      return { status: 400, error: "Failed to fetch products" };
+    }
+
+    const data = await res.json();
+    return { status: 200, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
+  }
 }
 
 async function GetProductById(productId) {
-  const res = await fetch(`${backendUrl}/product/${productId}`);
+  try {
+    const res = await fetch(`${backendUrl}/product/${productId}`);
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    return {
-      status: 400,
-      error: `Failed to fetch product with ID: ${data.error}`,
-    };
+    if (!res.ok) {
+      return {
+        status: 400,
+        error: `Failed to fetch product with ID: ${data.error}`,
+      };
+    }
+
+    return { status: 200, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
   }
-
-  return { status: 200, data };
 }
 
 async function UpdateProductById(updateData) {
@@ -89,8 +110,8 @@ async function CreateProduct(productData) {
 }
 
 export {
-  GetProducts,
   GetProductsPaginated,
+  GetMerchantProducts,
   GetProductById,
   UpdateProductById,
   CreateProduct,

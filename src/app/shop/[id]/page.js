@@ -29,9 +29,9 @@ export default function Page({ params }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await GetProductById(id);
+      const { status, data: res } = await GetProductById(id);
 
-      if (!res) {
+      if (status !== 200) {
         router.push("/shop");
         return;
       }

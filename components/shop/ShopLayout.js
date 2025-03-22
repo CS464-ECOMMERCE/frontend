@@ -3,7 +3,7 @@ import { Grid2, Typography, Pagination, Select, MenuItem } from "@mui/material";
 import ShopCard from "./ShopCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { GetProducts, GetProductsPaginated } from "@/src/app/api/product";
+import { GetProductsPaginated } from "@/src/app/api/product";
 import CustomPagination from "../CustomPagination";
 
 const imagesPlaceholder = [
@@ -11,11 +11,6 @@ const imagesPlaceholder = [
   "https://images.unsplash.com/photo-1735342623457-b683e0ba1c2b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw4fHx8ZW58MHx8fHx8",
   "https://images.unsplash.com/photo-1736134869386-78142c34260f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxOXx8fGVufDB8fHx8fA%3D%3D",
 ];
-
-function GetPageNumber() {
-  const { page } = useRouter().query;
-  return page ? parseInt(page) : 1;
-}
 
 export default function ShopLayout({ header }) {
   const [loading, setLoading] = useState(true);
@@ -31,24 +26,34 @@ export default function ShopLayout({ header }) {
   const [itemPerPage, setItemPerPage] = useState(itemPerPageValues[0]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [cursor, setCursor] = useState(0);
 
-  // reset page number when item per page changes
+  // reset when item per page changes
   useEffect(() => {
     setPage(1);
+    setCursor(0);
+    setData([]);
   }, [itemPerPage]);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const [allProducts, paginatedProducts] = await Promise.all([
-        GetProducts(),
-        GetProductsPaginated(page - 1, itemPerPage), // offset by 1 due to the label
-      ]);
-      setTotalItems(allProducts.length);
-      setTotalPages(Math.ceil(allProducts.length / itemPerPage));
-      setData(paginatedProducts);
+      const lastCursor = page > 1 ? cursor : 0;
+      const { status, data: res } = await GetProductsPaginated(
+        itemPerPage,
+        lastCursor
+      );
+      if (status !== 200) {
+        console.error("Failed to fetch products");
+      } else {
+        setTotalItems(res.total);
+        setCursor(res.cursor);
+        setData(res.products);
+        setTotalPages(Math.ceil(res.total / itemPerPage));
+      }
       setLoading(false);
     };
+
     fetchData();
   }, [itemPerPage, page]);
 
@@ -65,7 +70,7 @@ export default function ShopLayout({ header }) {
       <div className="header">
         <Typography variant="h3">{header ?? "All Products"}</Typography>
       </div>
-      {loading || data.length === 0 ? (
+      {loading || !data || data?.length === 0 ? (
         <Grid2 container spacing={3}>
           {Array.from({ length: 20 }).map((_, i) => (
             <ShopCard key={i} isLoading={true} />

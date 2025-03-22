@@ -2,14 +2,11 @@
 import {
   Card,
   CardContent,
-  CardMedia,
-  Divider,
   Grid2,
   Skeleton,
   Typography,
 } from "@mui/material";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-// import ShopTag from "./ShopTag";
 
 export default function ShopCard({
   id,
@@ -35,10 +32,6 @@ export default function ShopCard({
           />
           <CardContent className="content">
             <Typography variant="subtitle2">{title ?? "Title"}</Typography>
-            {/* <Divider /> */}
-            {/* <div className="tag-container">
-              <ShopTag />
-            </div> */}
             <Typography variant="body2">
               $ {price.toFixed(2) ?? "Price"}
             </Typography>

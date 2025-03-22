@@ -1,7 +1,6 @@
-"use client";
 const { cookies } = require("next/headers");
 
-function addTokenCookie(token) {
+async function addTokenCookie(token) {
   cookies().set("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

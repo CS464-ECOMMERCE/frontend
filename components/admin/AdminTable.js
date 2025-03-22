@@ -4,8 +4,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Typography } from "@mui/material";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { GetProductsPaginated } from "@/src/app/api/product";
+import { GetMerchantProducts } from "@/src/app/api/product";
 import { ProductDialogForm } from "./product/ProductDialogForm";
+import DeleteButton from "../DeleteButton";
 
 export default function AdminTable() {
   const [data, setData] = React.useState({});
@@ -26,7 +27,7 @@ export default function AdminTable() {
 
       setLoading(true);
       const lastCursor = paginationModel.page > 0 ? cursor : 0;
-      const { status, data: res } = await GetProductsPaginated(
+      const { status, data: res } = await GetMerchantProducts(
         paginationModel.pageSize,
         lastCursor
       );
@@ -66,12 +67,19 @@ export default function AdminTable() {
       headerName: "",
       sortable: false,
       flex: 2,
-      field: "",
+      field: "view",
       renderCell: (params) => (
         <Button variant="default" onClick={() => handleEditClick(params)}>
           View Details
         </Button>
       ),
+    },
+    {
+      headerName: "",
+      sortable: false,
+      flex: 2,
+      field: "delete",
+      renderCell: (params) => <DeleteButton id={params.row} />,
     },
   ];
 
@@ -80,7 +88,15 @@ export default function AdminTable() {
 
     // add new data to the (loaded) last page if it's not full
     // purpose is to reduce the number of API calls
-    if (data[lastKey].products.length < paginationModel.pageSize) {
+    if (!data[lastKey]?.products) {
+      // empty object
+      setData((prev) => ({
+        ...prev,
+        [lastKey]: {
+          products: [newData],
+        },
+      }));
+    } else if (data[lastKey].products.length < paginationModel.pageSize) {
       setData((prev) => ({
         ...prev,
         [lastKey]: {

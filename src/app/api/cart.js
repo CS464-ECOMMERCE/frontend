@@ -1,17 +1,18 @@
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+const backendUrl = "http://localhost:3001";
 
 async function GetCart() {
-  const res = await fetch(`${backendUrl}/cart`);
+  try {
+    const res = await fetch(`${backendUrl}/cart`);
+    const data = await res.json();
 
-  if (!res.ok) {
-    return {
-      error: "Failed to fetch cart",
-      status: 400,
-    };
+    if (!res.ok) {
+      throw new Error(res || "Failed to retrieve cart");
+    }
+
+    return { status: 200, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
   }
-
-  const data = await res.json();
-  return { status: 200, data };
 }
 
 async function GetCartDetails() {
