@@ -111,8 +111,13 @@ async function UpdateItemQuantity(id, quantity) {
 async function RemoveItemFromCart(id) {
   const defaultError = "Failed to remove item from cart";
   try {
-    const res = await fetch(`${backendUrl}/cart/${id}`, {
-      method: "DELETE",
+    const res = await fetch(`${backendUrl}/cart/remove_item`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ id }),
     });
 
     if (!res.ok) {

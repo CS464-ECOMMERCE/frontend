@@ -3,16 +3,17 @@ import {
   Card,
   CardContent,
   CardMedia,
+  IconButton,
   Skeleton,
   Typography,
 } from "@mui/material";
-import CartDeleteButton from "./CartDeleteButton";
 import ProductQuantitySelector from "../product/ProductQuantitySelector";
 import { useEffect, useRef, useState } from "react";
 import { RemoveItemFromCart, UpdateItemQuantity } from "@/src/app/api/cart";
 import { useDispatch } from "react-redux";
 import { removeFromLocalCart } from "@/store/cartSlice";
 import { useRouter } from "next/navigation";
+import { Delete } from "@mui/icons-material";
 
 export default function CartCard({ loading, item, setItem }) {
   const { price, inventory, name } = item ?? {};
@@ -125,10 +126,9 @@ export default function CartCard({ loading, item, setItem }) {
                 </Typography>
 
                 <div className="actions" onClick={(e) => e.stopPropagation()}>
-                  <CartDeleteButton
-                    id={item.id}
-                    handleOnClick={handleDeleteClick}
-                  />
+                  <IconButton onClick={() => handleDeleteClick()}>
+                    <Delete />
+                  </IconButton>
                 </div>
               </div>
             </div>
