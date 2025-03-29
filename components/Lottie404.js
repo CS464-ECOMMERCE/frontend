@@ -19,5 +19,5 @@ export default function Lottie404() {
     return () => animation.destroy();
   }, []);
 
-  return <div className="h-96" ref={animationContainer}></div>;
+  return <div className="h-full" ref={animationContainer}></div>;
 }

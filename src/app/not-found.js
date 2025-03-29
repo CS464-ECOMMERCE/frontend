@@ -1,13 +1,11 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+
+import dynamic from "next/dynamic";
+
+const Lottie404 = dynamic(() => import("@/components/Lottie404"), {
+  ssr: false,
+});
 
 export default function NotFound() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace("/404");
-  }, [router]);
-
-  return;
+  return <Lottie404 />;
 }

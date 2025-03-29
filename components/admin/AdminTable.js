@@ -4,7 +4,10 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Typography } from "@mui/material";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { GetMerchantProducts } from "@/src/app/api/product";
+import {
+  GetMerchantProducts,
+  GetProductsPaginated,
+} from "@/src/app/api/product";
 import { ProductDialogForm } from "./product/ProductDialogForm";
 import DeleteButton from "../DeleteButton";
 
