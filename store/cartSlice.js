@@ -8,7 +8,7 @@ export const fetchCart = createAsyncThunk(
     if (res.status !== 200) {
       return thunkAPI.rejectWithValue(res.error);
     }
-    return res.data;
+    return res.data?.items || [];
   }
 );
 

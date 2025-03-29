@@ -1,11 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  Grid2,
-  Skeleton,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, Grid2, Skeleton, Typography } from "@mui/material";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 export default function ShopCard({

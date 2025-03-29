@@ -53,10 +53,7 @@ async function GetProductById(productId) {
     const data = await res.json();
 
     if (!res.ok) {
-      return {
-        status: 400,
-        error: `Failed to fetch product with ID: ${data.error}`,
-      };
+      throw new Error(`Failed to fetch product with ID.`);
     }
 
     return { status: 200, data };
@@ -78,7 +75,7 @@ async function UpdateProductById(updateData) {
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(`Failed to update product with ID ${updateData.id}`);
+      throw new Error(`Failed to update product with ID`);
     }
 
     return { status: res.status, data };

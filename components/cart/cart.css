@@ -26,6 +26,14 @@
   flex-direction: column;
   height: 12rem;
   padding: 1rem;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cart-container:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transform: translateX(10px);
+  cursor: pointer;
 }
 
 .cart-container .img {

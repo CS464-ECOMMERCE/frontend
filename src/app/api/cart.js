@@ -1,94 +1,159 @@
-const backendUrl = "http://localhost:3001";
+import { GetProductById } from "./product";
+
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 async function GetCart() {
+  const defaultError = "Failed to retrieve cart";
   try {
-    const res = await fetch(`${backendUrl}/cart`);
+    const res = await fetch(`${backendUrl}/cart`, {
+      credentials: "include",
+    });
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(res || "Failed to retrieve cart");
+      throw new Error(defaultError);
     }
 
     return { status: 200, data };
   } catch (err) {
-    return { status: 400, error: err.message };
+    return { status: 400, error: err.message || defaultError };
   }
 }
 
 async function GetCartDetails() {
-  const cart = await GetCart();
+  try {
+    const res = await GetCart();
 
-  const data = await Promise.all(
-    cart.data.map(async (item) => {
-      const itemData = await fetch(`${backendUrl}/products/${item.id}`);
+    if (res.status !== 200) {
+      throw new Error(res.error);
+    }
 
-      if (!itemData.ok) {
+    const cartData = res.data?.items || [];
+
+    const data = await Promise.all(
+      cartData.map(async (item) => {
+        const itemRes = await GetProductById(item.id);
+
+        if (itemRes.status !== 200) {
+          throw new Error("Failed to fetch product details");
+        }
+
         return {
-          error: "Failed to fetch product details",
-          status: 400,
+          ...itemRes.data,
+          quantity: Math.min(item.quantity, itemRes.data?.inventory || 1),
         };
-      }
+      })
+    );
 
-      const product = await itemData.json();
-      return {
-        ...product,
-        quantity: Math.min(item.quantity, product.inventory),
-      };
-    })
-  );
-
-  return { status: 200, data };
+    return { status: 200, data };
+  } catch (err) {
+    return {
+      error: err.message || "Failed to fetch cart details",
+      status: 400,
+    };
+  }
 }
 
 async function AddItemToCart(id, quantity) {
-  const allItems = await GetCart();
-  const existingItem = allItems.data.find((item) => item.id === id);
-  let res;
-
-  if (existingItem) {
-    quantity += existingItem.quantity;
-    res = await fetch(`${backendUrl}/cart/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ quantity }),
-    });
-  } else {
-    res = await fetch(`${backendUrl}/cart`, {
+  const defaultError = "Failed to add item to cart";
+  try {
+    const res = await fetch(`${backendUrl}/cart/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({ id, quantity }),
     });
-  }
 
-  if (!res.ok) {
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(defaultError);
+    }
+
+    return { status: 200, data };
+  } catch (err) {
     return {
-      error: "Failed to add item to cart",
+      error: err.message || "Failed to add item to cart",
       status: 400,
     };
   }
+}
 
-  const data = await res.json();
+async function UpdateItemQuantity(id, quantity) {
+  const defaultError = "Failed to update item quantity";
+  try {
+    const res = await fetch(`${backendUrl}/cart/update`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ id, quantity }),
+    });
 
-  return { status: 200, data };
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(defaultError);
+    }
+
+    return { status: 200, data };
+  } catch (err) {
+    return {
+      error: err.message || defaultError,
+      status: 400,
+    };
+  }
 }
 
 async function RemoveItemFromCart(id) {
-  const res = await fetch(`${backendUrl}/cart/${id}`, {
-    method: "DELETE",
-  });
+  const defaultError = "Failed to remove item from cart";
+  try {
+    const res = await fetch(`${backendUrl}/cart/${id}`, {
+      method: "DELETE",
+    });
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(defaultError);
+    }
+
+    return { status: 200 };
+  } catch (err) {
     return {
-      error: "Failed to remove item from cart",
+      error: err.message || defaultError,
       status: 400,
     };
   }
-
-  return { status: 200 };
 }
 
-export { GetCart, GetCartDetails, AddItemToCart, RemoveItemFromCart };
+async function EmptyCart() {
+  const defaultError = "Failed to empty cart";
+  try {
+    const res = await fetch(`${backendUrl}/cart/empty`, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error(defaultError);
+    }
+
+    return { status: 200 };
+  } catch (err) {
+    return {
+      error: err.message || defaultError,
+      status: 400,
+    };
+  }
+}
+
+export {
+  GetCart,
+  GetCartDetails,
+  AddItemToCart,
+  UpdateItemQuantity,
+  RemoveItemFromCart,
+  EmptyCart,
+};

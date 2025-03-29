@@ -20,15 +20,11 @@ export default function CartTrolleyButton() {
   }, [items]);
 
   return (
-    <Button variant="ghost" color="white">
+    <Button variant="ghost" color="white" onClick={() => router.push("/cart")}>
       {loading ? (
         <ShoppingCart sx={{ scale: 1.5 }} />
       ) : (
-        <Badge
-          badgeContent={cartLength}
-          color="secondary"
-          onClick={() => router.push("/cart")}
-        >
+        <Badge badgeContent={cartLength} color="secondary">
           <ShoppingCart sx={{ scale: 1.5 }} />
         </Badge>
       )}

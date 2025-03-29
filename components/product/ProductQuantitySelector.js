@@ -7,9 +7,15 @@ export default function ProductQuantitySelector({
   maxQuantity,
   onQuantityChange,
 }) {
-  const increment = () =>
-    onQuantityChange((prev) => Math.min(prev + 1, maxQuantity));
-  const decrement = () => onQuantityChange((prev) => Math.max(prev - 1, 1));
+  const increment = () => {
+    const newQuantity = Math.min(currentQuantity + 1, maxQuantity);
+    onQuantityChange(newQuantity);
+  };
+
+  const decrement = () => {
+    const newQuantity = Math.max(currentQuantity - 1, 1);
+    onQuantityChange(newQuantity);
+  };
 
   return (
     <Paper

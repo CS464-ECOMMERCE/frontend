@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import CartCard from "./CartCard";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { GetCartDetails } from "@/src/app/api/cart";
 import { useRouter } from "next/navigation";
 
@@ -37,6 +37,15 @@ export default function CartList({ loading, updateItems }) {
           {Array.from({ length: 3 }).map((_, i) => (
             <CartCard key={i} loading />
           ))}
+        </Box>
+      ) : !items || Object.keys(items).length === 0 ? (
+        <Box className="cart-list">
+          <Typography variant="h6">
+            No items in cart.{" "}
+            <a href="/shop" className="text-blue-500 underline">
+              Start shopping now!
+            </a>
+          </Typography>
         </Box>
       ) : (
         <Box className="cart-list">
