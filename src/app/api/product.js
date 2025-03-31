@@ -106,10 +106,28 @@ async function CreateProduct(productData) {
   }
 }
 
+async function DeleteProduct(id) {
+  try {
+    const res = await fetch(`${backendUrl}/product/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to delete product");
+    }
+
+    return { status: 200 };
+  } catch (err) {
+    return { status: 400, error: err.message };
+  }
+}
+
 export {
   GetProductsPaginated,
   GetMerchantProducts,
   GetProductById,
   UpdateProductById,
   CreateProduct,
+  DeleteProduct,
 };

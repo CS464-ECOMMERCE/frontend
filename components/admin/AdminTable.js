@@ -4,12 +4,10 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Typography } from "@mui/material";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import {
-  GetMerchantProducts,
-  GetProductsPaginated,
-} from "@/src/app/api/product";
+import { GetMerchantProducts } from "@/src/app/api/product";
 import { ProductDialogForm } from "./product/ProductDialogForm";
-import DeleteButton from "../DeleteButton";
+import DeleteProductBtn from "./DeleteProductBtn";
+import CustomSnackbar from "../CustomSnackbar";
 
 export default function AdminTable() {
   const [data, setData] = React.useState({});
@@ -21,6 +19,11 @@ export default function AdminTable() {
   const [rowCount, setRowCount] = React.useState(0);
   const router = useRouter();
   const [cursor, setCursor] = React.useState(0);
+  const [snackbar, setSnackbar] = React.useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +64,30 @@ export default function AdminTable() {
     router.push(`admin/product?product_id=${productId}`);
   };
 
+  const deleteData = (isSuccess, deletedId) => {
+    if (!isSuccess) {
+      openSnackbar("error", "Failed to delete product.");
+      return;
+    }
+    // remove data from the current page
+    openSnackbar("success", "Successfully deleted product.");
+    setData((prev) => {
+      const newData = { ...prev };
+      newData[paginationModel.page].products = newData[
+        paginationModel.page
+      ].products.filter((product) => product.id !== deletedId);
+      return newData;
+    });
+  };
+
+  const openSnackbar = (severity, message) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity,
+    });
+  };
+
   const columns = [
     { field: "id", headerName: "ID", flex: 1 },
     { field: "name", headerName: "Product Name", flex: 2 },
@@ -82,7 +109,20 @@ export default function AdminTable() {
       sortable: false,
       flex: 2,
       field: "delete",
-      renderCell: (params) => <DeleteButton id={params.row} />,
+      renderCell: (params) => (
+        <DeleteProductBtn
+          product={params.row}
+          description={
+            <>
+              Product ID: {params.row.id}
+              <br />
+              Product name: {params.row.name}
+            </>
+          }
+          title="Are you sure you want to delete product?"
+          updateParentData={deleteData}
+        />
+      ),
     },
   ];
 
@@ -136,6 +176,13 @@ export default function AdminTable() {
           width: "100%",
           height: "100%",
         }}
+      />
+
+      <CustomSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        severity={snackbar.severity}
       />
     </div>
   );
