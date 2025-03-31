@@ -10,6 +10,10 @@ export default function ShopCard({
   onClick,
   isLoading,
 }) {
+  const getTitle = () => {
+    if (!title) return "Title";
+    return title.length > 10 ? title.slice(0, 10) + "..." : title;
+  };
   return (
     <Grid2 size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
       {isLoading ? (
@@ -25,7 +29,7 @@ export default function ShopCard({
             title="Coffee"
           />
           <CardContent className="content">
-            <Typography variant="subtitle2">{title ?? "Title"}</Typography>
+            <Typography variant="subtitle2">{getTitle()}</Typography>
             <Typography variant="body2">
               $ {price.toFixed(2) ?? "Price"}
             </Typography>
