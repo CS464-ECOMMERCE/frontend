@@ -78,7 +78,7 @@ export default function ShopLayout({ header }) {
         </Grid2>
       ) : (
         <div className="flex flex-col items-center gap-8">
-          <Grid2 container spacing={3}>
+          <Grid2 container spacing={3} className="w-full">
             {data.map((item, i) => (
               <ShopCard
                 key={i}

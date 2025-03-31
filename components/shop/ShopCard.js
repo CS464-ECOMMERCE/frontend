@@ -31,7 +31,7 @@ export default function ShopCard({
           <CardContent className="content">
             <Typography variant="subtitle2">{getTitle()}</Typography>
             <Typography variant="body2">
-              $ {price.toFixed(2) ?? "Price"}
+              $ {price?.toFixed(2) ?? "Price"}
             </Typography>
           </CardContent>
         </Card>
