@@ -123,6 +123,32 @@ async function DeleteProduct(id) {
   }
 }
 
+async function UploadProductImage(productId, images) {
+  const formData = new FormData();
+  images.forEach((img) => {
+    formData.append("images", img);
+  });
+
+  try {
+    const res = await fetch(`${backendUrl}/product/upload/${productId}`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error(res);
+      throw new Error("Failed to upload image");
+    }
+
+    return { status: 200, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
+  }
+}
+
 export {
   GetProductsPaginated,
   GetMerchantProducts,
@@ -130,4 +156,5 @@ export {
   UpdateProductById,
   CreateProduct,
   DeleteProduct,
+  UploadProductImage,
 };

@@ -19,7 +19,12 @@ import { Form } from "@/components/ui/form";
 import CustomTextField from "@/components/custominput/CustomTextField";
 import CustomSwitch from "@/components/custominput/CustomSwitch";
 import { Alert, Typography } from "@mui/material";
-import { CreateProduct, UpdateProductById } from "@/src/app/api/product";
+import {
+  CreateProduct,
+  UpdateProductById,
+  UploadProductImage,
+} from "@/src/app/api/product";
+import CustomImageInput from "@/components/custominput/CustomImageInput";
 
 const fields = [
   {
@@ -71,6 +76,12 @@ const fields = [
     type: "text",
     validation: z.string().optional(),
   },
+  {
+    name: "images",
+    label: "Images",
+    type: "file",
+    validation: z.array(z.any()).optional(),
+  },
 ];
 
 const schema = z.object(
@@ -120,13 +131,17 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
 
     let result;
 
+    const valueWithoutImages = Object.fromEntries(
+      Object.entries(values).filter(([key]) => key !== "images")
+    );
+
     if (isNew) {
-      result = await CreateProduct(values);
+      result = await CreateProduct(valueWithoutImages);
     } else {
       // only update dirty fields
       const updateData = Object.keys(dirtyFields).reduce(
         (acc, key) => {
-          acc[key] = values[key];
+          acc[key] = valueWithoutImages[key];
           return acc;
         },
         { id: data.id }
@@ -134,13 +149,24 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
       result = await UpdateProductById(updateData);
     }
 
-    if (![200, 201].includes(result.status)) {
+    const { status, data: product } = result;
+
+    if (![200, 201].includes(status)) {
       setError("Failed to update product");
       setSubmitting(false);
       return;
     }
 
-    updateParentData(result.data);
+    if (dirtyFields.images) {
+      const uploadImages = await UploadProductImage(product.id, values.images);
+      if (uploadImages.status !== 200) {
+        setError("Failed to upload images");
+        setSubmitting(false);
+        return;
+      }
+    }
+
+    updateParentData(product);
     setSubmitting(false);
     closeDialog();
   }
@@ -158,6 +184,17 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
     setOpen(false);
     setError(null);
     form.reset();
+  }
+
+  function fieldType(field, form) {
+    switch (field.type) {
+      case "switch":
+        return <CustomSwitch item={field} form={form} />;
+      case "file":
+        return <CustomImageInput item={field} form={form} />;
+      default: // text or number
+        return <CustomTextField item={field} form={form} />;
+    }
   }
 
   return (
@@ -179,13 +216,7 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {fields.map((field, i) => (
-              <div key={i}>
-                {field.type === "text" || field.type === "number" ? (
-                  <CustomTextField item={field} form={form} />
-                ) : (
-                  <CustomSwitch item={field} form={form} />
-                )}
-              </div>
+              <div key={i}>{fieldType(field, form)}</div>
             ))}
             {error && (
               <DialogDescription>
