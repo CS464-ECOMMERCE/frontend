@@ -6,13 +6,14 @@ import ProductDetails from "@/components/product/ProductDetails";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ProductDialogForm } from "@/components/admin/product/ProductDialogForm";
+import ProductDetailPage from "@/components/product/ProductDetailsPage";
+import { Skeleton } from "@mui/material";
 
 export default function AdminProductDetailPage() {
-  const [data, setData] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [formKey, setFormKey] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [productId, setProductId] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const productId = searchParams.get("product_id");
@@ -20,56 +21,13 @@ export default function AdminProductDetailPage() {
       router.push("/admin");
       return;
     }
-    const fetchData = async () => {
-      const { status: dataStatus, data: product } = await GetProductById(
-        productId
-      );
-      if (dataStatus !== 200) {
-        router.push("/shop");
-        return;
-      }
-
-      if (product.images?.length > 0) {
-        const { status: imageStatus, data: images } =
-          await DownloadProductImages(product.images);
-
-        if (imageStatus === 200) {
-          product["file_images"] = images;
-        }
-      }
-
-      setData(product);
-      setLoading(false);
-    };
-    fetchData();
+    setProductId(productId);
+    setLoading(false);
   }, []);
 
-  const updateData = (newData) => {
-    setData((prev) => ({ ...prev, ...newData }));
-    setFormKey((prev) => !prev);
-  };
+  if (loading) {
+    return <Skeleton variant="rounded" width="100%" height="80vh" />;
+  }
 
-  return (
-    <>
-      <div className="flex flex-col gap-5">
-        <div className="flex justify-between">
-          <BackButton />
-          <ProductDialogForm
-            key={formKey}
-            data={data}
-            updateParentData={updateData}
-            isNew={false}
-          />
-        </div>
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className="flex-1">
-            <ProductImages images={data.images} loading={loading} />
-          </div>
-          <div className="flex-1">
-            <ProductDetails item={data} loading={loading} isAdmin={true} />
-          </div>
-        </div>
-      </div>
-    </>
-  );
+  return <ProductDetailPage isAdmin={true} productId={productId} />;
 }

@@ -1,10 +1,4 @@
-"use client";
-import { GetProductById } from "@/src/app/api/product";
-import BackButton from "@/components/BackButton";
-import ProductImages from "@/components/product/gallery/ProductImages";
-import ProductDetails from "@/components/product/ProductDetails";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import ProductDetailsPage from "@/components/product/ProductDetailsPage";
 
 export const imgPlaceholder = [
   "https://plus.unsplash.com/premium_photo-1704546974012-78acde0d4905?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxfHx8ZW58MHx8fHx8",
@@ -13,39 +7,7 @@ export const imgPlaceholder = [
 ];
 
 export default function Page({ params }) {
-  const router = useRouter();
-  const [data, setData] = useState({});
-  const [loading, setLoading] = useState(true);
   const { id } = params;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { status, data: res } = await GetProductById(id);
-
-      if (status !== 200) {
-        router.push("/shop");
-        return;
-      }
-
-      setData(res);
-      setLoading(false);
-    };
-    fetchData();
-  }, []);
-
-  return (
-    <div className="flex flex-col gap-5">
-      <div>
-        <BackButton />
-      </div>
-      <div className="flex flex-col sm:flex-row gap-8">
-        <div className="flex-1">
-          <ProductImages images={imgPlaceholder} loading={loading} />
-        </div>
-        <div className="flex-1">
-          <ProductDetails item={data} loading={loading} />
-        </div>
-      </div>
-    </div>
-  );
+  return <ProductDetailsPage isAdmin={false} productId={id} />;
 }
