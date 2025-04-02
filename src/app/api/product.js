@@ -149,6 +149,45 @@ async function UploadProductImage(productId, images) {
   }
 }
 
+async function DownloadProductImages(imageUrls) {
+  try {
+    const results = await Promise.allSettled(
+      imageUrls.map(async (url) => {
+        const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error(`Failed to fetch image from ${url}`);
+        }
+        return await res.blob();
+      })
+    );
+
+    const blobs = results
+      .filter((result) => result.status === "fulfilled")
+      .map((result, index) => {
+        const blob = result.value;
+
+        // Extract file name from the URL
+        const url = imageUrls[index];
+        const fileName = url.split("/").pop(); // Get the last part of the URL
+
+        // Convert Blob to File with the extracted name
+        return new File([blob], fileName, { type: blob.type });
+      });
+
+    const errors = results
+      .filter((result) => result.status === "rejected")
+      .map((result) => result.reason.message);
+
+    if (errors.length > 0) {
+      throw new Error("Some images failed to download:", errors);
+    }
+
+    return { status: 200, data: blobs };
+  } catch (err) {
+    return { status: 400, error: err };
+  }
+}
+
 export {
   GetProductsPaginated,
   GetMerchantProducts,
@@ -157,4 +196,5 @@ export {
   CreateProduct,
   DeleteProduct,
   UploadProductImage,
+  DownloadProductImages,
 };

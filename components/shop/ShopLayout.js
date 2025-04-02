@@ -85,7 +85,11 @@ export default function ShopLayout({ header }) {
                 id={item.id}
                 title={item.name}
                 price={item.price}
-                image={imagesPlaceholder[i % 3]}
+                image={
+                  item.images?.length > 0
+                    ? item.images[0]
+                    : imagesPlaceholder[0]
+                }
                 onClick={handleOnClick}
                 isLoading={false}
               />

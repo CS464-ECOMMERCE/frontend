@@ -9,16 +9,11 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Delete } from "@mui/icons-material";
 
-export default function CustomImageInput({ item, form }) {
-  const [validFiles, setValidFiles] = useState([]);
-
-  //   useEffect(() => {
-  //     // Keep form state in sync with validFiles
-  //     form.setValue(item.name, validFiles);
-  //   }, [validFiles, form, item.name]);
+export default function CustomImageInput({ item, form, initialValue }) {
+  const [validFiles, setValidFiles] = useState(initialValue || []);
 
   const onValueChange = (e, field) => {
     const errors = [];
@@ -59,10 +54,12 @@ export default function CustomImageInput({ item, form }) {
     e.target.value = null;
   };
 
-  const removeFile = (indexToRemove) => {
-    setValidFiles((prevValidFiles) =>
-      prevValidFiles.filter((_, index) => index !== indexToRemove)
+  const removeFile = (field, indexToRemove) => {
+    const updatedFiles = validFiles.filter(
+      (_, index) => index !== indexToRemove
     );
+    setValidFiles(updatedFiles);
+    field.onChange(updatedFiles);
   };
 
   return (
@@ -109,7 +106,7 @@ export default function CustomImageInput({ item, form }) {
                     </Typography>
                     <IconButton
                       variant="ghost"
-                      onClick={() => removeFile(index)}
+                      onClick={() => removeFile(field, index)}
                       className="text-red-500 hover:underline"
                       size="small"
                     >

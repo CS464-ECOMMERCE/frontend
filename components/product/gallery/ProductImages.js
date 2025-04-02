@@ -11,8 +11,9 @@ import {
 } from "./ProductImagesArrowButton";
 import { DotButton, useDotButton } from "./ProductImagesDotButton";
 import { LazyLoadImage } from "./ProductImagesLazyLoadImage";
+import { imgPlaceholder } from "@/src/app/shop/[id]/page";
 
-export default function ProductImages({ images = [], loading }) {
+export default function ProductImages({ images = imgPlaceholder, loading }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay()]);
   const [slidesInView, setSlidesInView] = useState([]);
 
@@ -62,8 +63,8 @@ export default function ProductImages({ images = [], loading }) {
               <LazyLoadImage
                 key={index}
                 index={index}
-                imgSrc={img.url}
-                alt={img.alt}
+                imgSrc={img}
+                alt={`Image ${index}`}
                 inView={slidesInView.indexOf(index) > -1}
               />
             ))

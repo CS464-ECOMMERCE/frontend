@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import CustomTextField from "@/components/custominput/CustomTextField";
-import CustomSwitch from "@/components/custominput/CustomSwitch";
 import { Alert, Typography } from "@mui/material";
 import {
   CreateProduct,
@@ -25,6 +24,7 @@ import {
   UploadProductImage,
 } from "@/src/app/api/product";
 import CustomImageInput from "@/components/custominput/CustomImageInput";
+import CustomSnackbar from "@/components/CustomSnackbar";
 
 const fields = [
   {
@@ -77,10 +77,10 @@ const fields = [
     validation: z.string().optional(),
   },
   {
-    name: "images",
+    name: "file_images", // new key in frontend; not used in backend
     label: "Images",
     type: "file",
-    validation: z.array(z.any()).optional(),
+    validation: z.array(z.any()).optional().nullable(),
   },
 ];
 
@@ -95,13 +95,18 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const defaultValues = fields.reduce((acc, field) => {
     // set default values if not new
     if (!isNew && data[field.name]) {
       acc[field.name] = data[field.name];
     } else {
-      acc[field.name] = field.type === "switch" ? false : "";
+      acc[field.name] = field.type === "file" ? null : "";
     }
     return acc;
   }, {});
@@ -117,9 +122,20 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
     }
   }, [data, isNew, form]);
 
-  const {
-    formState: { isDirty, dirtyFields },
-  } = form;
+  const { isDirty, dirtyFields } = form.formState;
+
+  async function handleAddNewProductImage(productId, images) {
+    if (!dirtyFields["file_images"]) {
+      return;
+    }
+
+    const uploadImages = await UploadProductImage(productId, images);
+    if (uploadImages.status !== 200) {
+      setError("Failed to upload images");
+      setSubmitting(false);
+      return;
+    }
+  }
 
   async function onSubmit(values) {
     if (!isDirty) {
@@ -132,11 +148,12 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
     let result;
 
     const valueWithoutImages = Object.fromEntries(
-      Object.entries(values).filter(([key]) => key !== "images")
+      Object.entries(values).filter(([key]) => key !== "file_images")
     );
 
     if (isNew) {
       result = await CreateProduct(valueWithoutImages);
+      await handleAddNewProductImage(result.data.id, values.file_images);
     } else {
       // only update dirty fields
       const updateData = Object.keys(dirtyFields).reduce(
@@ -149,24 +166,15 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
       result = await UpdateProductById(updateData);
     }
 
-    const { status, data: product } = result;
-
-    if (![200, 201].includes(status)) {
+    if (![200, 201].includes(result.status)) {
+      showSnackbar(result.data.message ?? "Failed", "error");
       setError("Failed to update product");
       setSubmitting(false);
       return;
     }
 
-    if (dirtyFields.images) {
-      const uploadImages = await UploadProductImage(product.id, values.images);
-      if (uploadImages.status !== 200) {
-        setError("Failed to upload images");
-        setSubmitting(false);
-        return;
-      }
-    }
-
-    updateParentData(product);
+    showSnackbar(`Successfully ${isNew ? "added." : "updated."}`, "success");
+    updateParentData(result.data);
     setSubmitting(false);
     closeDialog();
   }
@@ -179,6 +187,10 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
     }
   }
 
+  function showSnackbar(message, severity) {
+    setSnackbar({ open: true, message, severity });
+  }
+
   function closeDialog() {
     if (submitting) return;
     setOpen(false);
@@ -188,61 +200,73 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
 
   function fieldType(field, form) {
     switch (field.type) {
-      case "switch":
-        return <CustomSwitch item={field} form={form} />;
       case "file":
-        return <CustomImageInput item={field} form={form} />;
+        return (
+          <CustomImageInput
+            item={field}
+            form={form}
+            initialValue={defaultValues[`${field.name}`]}
+          />
+        );
       default: // text or number
         return <CustomTextField item={field} form={form} />;
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={(e) => handleOnOpenChange(e)}>
-      <DialogTrigger asChild>
-        <Button variant="default">
-          {isNew ? "Create New" : "Edit"} Product
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="md:max-w-[768px]">
-        <DialogHeader>
-          <DialogTitle className="text-3xl">
-            {isNew ? "Create New" : "Edit"} Product Details
-          </DialogTitle>
-          <DialogDescription className="text-lg">
-            Change how your products display on the page
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {fields.map((field, i) => (
-              <div key={i}>{fieldType(field, form)}</div>
-            ))}
-            {error && (
-              <DialogDescription>
-                <Alert severity="error" className="flex items-center">
-                  <Typography variant="body2" color="red">
-                    {error}
-                  </Typography>
-                </Alert>
-              </DialogDescription>
-            )}
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={closeDialog}
-                disabled={submitting}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={submitting}>
-                {submitting ? "Submitting..." : isNew ? "Create" : "Save"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog open={open} onOpenChange={(e) => handleOnOpenChange(e)}>
+        <DialogTrigger asChild>
+          <Button variant="default">
+            {isNew ? "Create New" : "Edit"} Product
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="md:max-w-[768px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-3xl">
+              {isNew ? "Create New" : "Edit"} Product Details
+            </DialogTitle>
+            <DialogDescription className="text-lg">
+              Change how your products display on the page
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {fields.map((field, i) => (
+                <div key={i}>{fieldType(field, form)}</div>
+              ))}
+              {error && (
+                <DialogDescription>
+                  <Alert severity="error" className="flex items-center">
+                    <Typography variant="body2" color="red">
+                      {error}
+                    </Typography>
+                  </Alert>
+                </DialogDescription>
+              )}
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={closeDialog}
+                  disabled={submitting}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={submitting}>
+                  {submitting ? "Submitting..." : isNew ? "Create" : "Save"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Snackbar */}
+      <CustomSnackbar
+        {...snackbar}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+      />
+    </>
   );
 }
