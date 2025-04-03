@@ -6,17 +6,6 @@ export async function middleware(req) {
 
   const pathname = req.nextUrl.pathname;
 
-  const stripePaths = ["/stripe"];
-  if (stripePaths.some((path) => pathname.startsWith(path))) {
-    // If user is authenticated, redirect to dashboard
-    if (token) {
-      return NextResponse.redirect(new URL("/admin", req.url));
-    } else {
-      // If user is NOT authenticated, redirect to login page
-      return NextResponse.redirect(new URL("/shop", req.url));
-    }
-  }
-
   // If not authenticated, navigate to protected paths
   const protectedPaths = ["/admin"];
 
@@ -41,12 +30,5 @@ export async function middleware(req) {
 
 // Apply middleware to specific paths
 export const config = {
-  matcher: [
-    "/admin/:path*",
-    "/login",
-    "/register",
-    "/shop/:path*",
-    "/cart",
-    "/stripe/:path*",
-  ],
+  matcher: ["/admin/:path*", "/login", "/register", "/shop/:path*", "/cart"],
 };
