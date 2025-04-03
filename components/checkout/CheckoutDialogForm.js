@@ -17,7 +17,7 @@ import { Button } from "../ui/button";
 import { Form } from "../ui/form";
 import CustomTextField from "../custominput/CustomTextField";
 import { PlaceOrder } from "@/src/app/api/order";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "@/store/cartSlice";
 
 const fields = [
@@ -42,6 +42,7 @@ export function CheckoutDialogForm() {
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const dispatch = useDispatch();
+  const cartRedux = useSelector((state) => state.cart.items);
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -73,6 +74,12 @@ export function CheckoutDialogForm() {
     closeDialog();
   };
 
+  const openDialog = () => {
+    if (cartRedux.length === 0) return;
+    setError(null);
+    setOpen(true);
+  };
+
   const closeDialog = () => {
     if (submitting) return;
     form.reset();
@@ -80,7 +87,7 @@ export function CheckoutDialogForm() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={(e) => setOpen(e)}>
+    <Dialog open={open} onOpenChange={() => openDialog()}>
       <DialogTrigger asChild className="checkout-btn">
         <Button variant="default">Proceed to Checkout</Button>
       </DialogTrigger>
