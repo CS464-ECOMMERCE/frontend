@@ -46,12 +46,24 @@ export const config = {
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
+      // If the user just signed in, add the token and expiration
       if (user) {
         token.accessToken = user.token;
       }
+
+      // If the token has expired, remove it
+      if (Date.now() > token.accessTokenExpires) {
+        console.log("Token expired, removing session");
+        cookies().delete("token"); // Remove the token from cookies
+        return null; // Invalidate the session
+      }
+
       return token;
     },
     async session({ session, token }) {
+      if (!token) {
+        return null;
+      }
       session.accessToken = token.accessToken;
       return session;
     },

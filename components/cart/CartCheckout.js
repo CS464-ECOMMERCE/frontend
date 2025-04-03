@@ -1,6 +1,4 @@
 import {
-  Box,
-  Button,
   Card,
   CardContent,
   CardHeader,
@@ -8,6 +6,8 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
+import { Button } from "../ui/button";
+import { CheckoutDialogForm } from "../checkout/CheckoutDialogForm";
 
 export default function CartCheckout({ loading, items }) {
   let subtotal,
@@ -20,6 +20,7 @@ export default function CartCheckout({ loading, items }) {
     );
     tax = subtotal * 0.1;
   }
+
   return (
     <>
       {loading ? (
@@ -76,9 +77,7 @@ export default function CartCheckout({ loading, items }) {
           </CardContent>
 
           <CardContent>
-            <Button variant="contained" className="checkout-btn">
-              Proceed to Checkout
-            </Button>
+            <CheckoutDialogForm />
           </CardContent>
         </Card>
       )}

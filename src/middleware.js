@@ -4,10 +4,21 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
+  const pathname = req.nextUrl.pathname;
+
+  const stripePaths = ["/stripe"];
+  if (stripePaths.some((path) => pathname.startsWith(path))) {
+    // If user is authenticated, redirect to dashboard
+    if (token) {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    } else {
+      // If user is NOT authenticated, redirect to login page
+      return NextResponse.redirect(new URL("/shop", req.url));
+    }
+  }
+
   // If not authenticated, navigate to protected paths
   const protectedPaths = ["/admin"];
-
-  const pathname = req.nextUrl.pathname;
 
   if (protectedPaths.some((path) => pathname.startsWith(path))) {
     // If user is NOT authenticated, redirect to login page
@@ -30,5 +41,12 @@ export async function middleware(req) {
 
 // Apply middleware to specific paths
 export const config = {
-  matcher: ["/admin/:path*", "/login", "/register", "/shop/:path*", "/cart"],
+  matcher: [
+    "/admin/:path*",
+    "/login",
+    "/register",
+    "/shop/:path*",
+    "/cart",
+    "/stripe/:path*",
+  ],
 };

@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-const Lottie404 = dynamic(() => import("@/components/Lottie404"), {
+const Lottie404 = dynamic(() => import("@/components/lotties/Lottie404"), {
   ssr: false,
 });
 

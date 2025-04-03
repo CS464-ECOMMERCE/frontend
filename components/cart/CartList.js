@@ -4,10 +4,12 @@ import CartCard from "./CartCard";
 import { Box, Typography } from "@mui/material";
 import { GetCartDetails } from "@/src/app/api/cart";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
 export default function CartList({ loading, updateItems }) {
   const [items, setItems] = useState({});
   const router = useRouter();
+  const cartRedux = useSelector((state) => state.cart.items); // to manage state changes
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,8 +24,13 @@ export default function CartList({ loading, updateItems }) {
       );
       setItems(itemsObject);
     };
-    fetchData();
-  }, []);
+
+    if (cartRedux.length > 0) {
+      fetchData();
+    } else {
+      setItems({});
+    }
+  }, [cartRedux]);
 
   // update parent's state
   useEffect(() => {
