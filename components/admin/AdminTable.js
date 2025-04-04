@@ -39,7 +39,7 @@ export default function AdminTable() {
       );
 
       if (status !== 200) {
-        router.push("/400");
+        router.push("/oh_no");
         return;
       }
       setData((prev) => ({

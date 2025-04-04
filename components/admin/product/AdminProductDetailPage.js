@@ -1,11 +1,6 @@
 "use client";
-import { DownloadProductImages, GetProductById } from "@/src/app/api/product";
-import BackButton from "@/components/BackButton";
-import ProductImages from "@/components/product/gallery/ProductImages";
-import ProductDetails from "@/components/product/ProductDetails";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ProductDialogForm } from "@/components/admin/product/ProductDialogForm";
 import ProductDetailPage from "@/components/product/ProductDetailsPage";
 import { Skeleton } from "@mui/material";
 

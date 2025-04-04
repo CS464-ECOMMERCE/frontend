@@ -15,7 +15,7 @@ export default function CartList({ loading, updateItems }) {
     const fetchData = async () => {
       const res = await GetCartDetails();
       if (res.status !== 200) {
-        router.push(`/400?message=${res.error}`);
+        router.push("/oh_no");
         return;
       }
       const itemsObject = res.data.reduce(

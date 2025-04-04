@@ -6,6 +6,16 @@ export async function middleware(req) {
 
   const pathname = req.nextUrl.pathname;
 
+  const errorPaths = ["/oh_no"];
+  if (errorPaths.some((path) => pathname.startsWith(path))) {
+    // If user is authenticated, redirect to dashboard
+    if (token) {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    } else {
+      return NextResponse.redirect(new URL("/shop", req.url));
+    }
+  }
+
   // If not authenticated, navigate to protected paths
   const protectedPaths = ["/admin"];
 
@@ -30,5 +40,12 @@ export async function middleware(req) {
 
 // Apply middleware to specific paths
 export const config = {
-  matcher: ["/admin/:path*", "/login", "/register", "/shop/:path*", "/cart"],
+  matcher: [
+    "/admin/:path*",
+    "/login",
+    "/register",
+    "/shop/:path*",
+    "/cart",
+    "/oh_no",
+  ],
 };
