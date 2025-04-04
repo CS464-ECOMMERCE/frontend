@@ -47,12 +47,14 @@ export default function ProductDetails({ item, loading, isAdmin }) {
               Unit Price: $ {price.toFixed(2)}
             </Typography>
             <Typography variant="h6">
-              $ {(price * quantity).toFixed(2)}
+              {maxQuantity > 0
+                ? `$${(price * quantity).toFixed(2)}`
+                : "Out of stock"}
             </Typography>
           </Alert>
           <Typography variant="body2">Quantity: {maxQuantity}</Typography>
           <ProductQuantitySelector
-            currentQuantity={quantity}
+            currentQuantity={maxQuantity > 0 ? quantity : 0}
             maxQuantity={maxQuantity}
             onQuantityChange={setQuantity}
           />

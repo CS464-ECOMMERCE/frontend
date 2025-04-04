@@ -31,8 +31,11 @@ export default function ProductQuantitySelector({
       <IconButton onClick={decrement} disabled={currentQuantity <= 1}>
         <Remove />
       </IconButton>
-      <Typography variant="body2">{currentQuantity ?? 1}</Typography>
-      <IconButton onClick={increment} disabled={currentQuantity >= maxQuantity}>
+      <Typography variant="body2">{currentQuantity}</Typography>
+      <IconButton
+        onClick={increment}
+        disabled={!maxQuantity || currentQuantity >= maxQuantity}
+      >
         <Add />
       </IconButton>
     </Paper>
