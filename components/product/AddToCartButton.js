@@ -18,7 +18,13 @@ export default function AddToCartButton({ id, quantity }) {
   });
   const dispatch = useDispatch();
 
+  const oos = quantity <= 0;
+
   const handleAddToCart = async () => {
+    if (oos) {
+      return;
+    }
+
     const res = await AddItemToCart(id, quantity);
     if (res.status !== 200) {
       setSnackbar({
@@ -40,9 +46,11 @@ export default function AddToCartButton({ id, quantity }) {
   return (
     <>
       {!session && (
-        <Button variant="default" onClick={handleAddToCart}>
+        <Button variant="default" onClick={handleAddToCart} disabled={oos}>
           <ShoppingCart />
-          <Typography variant="body2">Add to Cart</Typography>
+          <Typography variant="body2">
+            {oos ? "Restocking..." : "Add to Cart"}
+          </Typography>
         </Button>
       )}
 
