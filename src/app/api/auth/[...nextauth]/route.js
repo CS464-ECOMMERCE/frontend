@@ -80,6 +80,17 @@ export const config = {
       cookies().delete("token");
     },
   },
+  cookies: {
+    sessionToken: {
+      name: "token", // Changed from "next-auth.session-token" to match your backend cookie name
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: true,
+      },
+    },
+  },
 };
 
 const handler = NextAuth(config);
