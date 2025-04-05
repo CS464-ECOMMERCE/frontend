@@ -32,6 +32,10 @@ async function GetMerchantProducts(pageSize, cursor) {
 
   try {
     const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
       credentials: "include",
     });
 

@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { cookies } from "next/headers";
 
 export const config = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -27,21 +26,15 @@ export const config = {
           if (!res.ok) {
             throw new Error("Invalid credentials");
           }
-
           if (!data?.token) {
-            throw new Error("Token missing in response");
+            throw new Error("No token received");
           }
 
-          // const tokenExpire = 60 * 60 * 24;
-          // cookies().set("token", data.token, {
-          //   httpOnly: true,
-          //   secure: process.env.NODE_ENV === "production",
-          //   sameSite: "strict",
-          //   maxAge: tokenExpire,
-          // });
-          console.log("Token set in cookies:", data.token);
-
-          return { token: data.token, user: { email: credentials.email } };
+          return {
+            id: data.user?.id || "",
+            email: credentials.email,
+            token: data.token,
+          };
         } catch (error) {
           return null;
         }
@@ -50,50 +43,36 @@ export const config = {
   ],
   session: { strategy: "jwt" },
   callbacks: {
-    async jwt({ token, user }) {
-      // If the user just signed in, add the token and expiration
-      console.log("JWT callback:", token, user);
+    async jwt({ token, user, trigger }) {
+      if (trigger === "signOut") {
+        return null;
+      }
       if (user) {
-        token.accessToken = user.token;
+        token.accessToken = user.token; // Use the backend token
       }
-
-      // If the token has expired, remove it
-      if (Date.now() > token.accessTokenExpires) {
-        console.log("Token expired, removing session");
-        cookies().delete("token"); // Remove the token from cookies
-        return null; // Invalidate the session
-      }
-
       return token;
     },
     async session({ session, token }) {
-      console.log("Session callback:", session, token);
-      if (!token) {
-        return null;
-      }
-      session.accessToken = token.accessToken;
+      session.user = token;
       return session;
     },
   },
   pages: {
     signIn: "/login",
+    signOut: "/login",
   },
-  events: {
-    async signOut() {
-      cookies().delete("token");
-    },
-  },
-  cookies: {
-    sessionToken: {
-      name: "token", // Changed from "next-auth.session-token" to match your backend cookie name
-      options: {
-        httpOnly: true,
-        sameSite: "none",
-        path: "/",
-        secure: true,
-      },
-    },
-  },
+  // cookies: {
+  //   sessionToken: {
+  //     name: `token`,
+  //     options: {
+  //       httpOnly: true,
+  //       sameSite: "lax",
+  //       path: "/",
+  //       secure: true,
+  //     },
+  //   },
+  // },
+  debug: true,
 };
 
 const handler = NextAuth(config);
