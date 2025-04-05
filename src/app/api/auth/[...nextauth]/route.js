@@ -39,6 +39,7 @@ export const config = {
           //   sameSite: "strict",
           //   maxAge: tokenExpire,
           // });
+          console.log("Token set in cookies:", data.token);
 
           return { token: data.token, user: { email: credentials.email } };
         } catch (error) {
@@ -51,6 +52,7 @@ export const config = {
   callbacks: {
     async jwt({ token, user }) {
       // If the user just signed in, add the token and expiration
+      console.log("JWT callback:", token, user);
       if (user) {
         token.accessToken = user.token;
       }
@@ -65,6 +67,7 @@ export const config = {
       return token;
     },
     async session({ session, token }) {
+      console.log("Session callback:", session, token);
       if (!token) {
         return null;
       }
