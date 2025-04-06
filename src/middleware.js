@@ -6,9 +6,7 @@ export async function middleware(req) {
     req,
     secret: process.env.NEXTAUTH_SECRET,
     cookieName: "token",
-    raw: true,
   });
-
   const pathname = req.nextUrl.pathname;
 
   const errorPaths = ["/oh_no"];

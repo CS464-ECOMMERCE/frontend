@@ -33,7 +33,7 @@ const schema = z.object(
   fields.reduce((acc, field) => {
     acc[field.name] = field.validation;
     return acc;
-  }, {})
+  }, {}),
 );
 
 export default function Login() {
@@ -45,7 +45,7 @@ export default function Login() {
   });
   const defaultValues = fields.reduce(
     (acc, field) => ({ ...acc, [field.name]: "" }),
-    {}
+    {},
   );
   const router = useRouter();
 

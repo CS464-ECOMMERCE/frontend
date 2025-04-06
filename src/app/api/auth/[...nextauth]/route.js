@@ -19,7 +19,7 @@ export const config = {
               headers: { "Content-Type": "application/json" },
               credentials: "include",
               body: JSON.stringify(credentials),
-            }
+            },
           );
           const data = await res.json();
 
@@ -53,7 +53,11 @@ export const config = {
       return token;
     },
     async session({ session, token }) {
-      session.user = token;
+      session.user = {
+        ...session.user,
+        id: token.id,
+        accessToken: token.accessToken,
+      };
       return session;
     },
   },
@@ -61,17 +65,17 @@ export const config = {
     signIn: "/login",
     signOut: "/login",
   },
-  // cookies: {
-  //   sessionToken: {
-  //     name: `token`,
-  //     options: {
-  //       httpOnly: true,
-  //       sameSite: "lax",
-  //       path: "/",
-  //       secure: true,
-  //     },
-  //   },
-  // },
+  cookies: {
+    sessionToken: {
+      name: `token`,
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: true,
+      },
+    },
+  },
   debug: true,
 };
 

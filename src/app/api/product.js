@@ -162,7 +162,7 @@ async function DownloadProductImages(imageUrls) {
           throw new Error(`Failed to fetch image from ${url}`);
         }
         return await res.blob();
-      })
+      }),
     );
 
     const blobs = results
