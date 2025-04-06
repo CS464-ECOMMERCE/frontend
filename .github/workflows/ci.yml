@@ -15,7 +15,7 @@ jobs:
         with:
           token: ${{ secrets.VERCEL_TOKEN }}
           projectName: cs464-frontend
-          envVariableKeys: NEXT_PUBLIC_STRIPE_KEY,NEXT_PUBLIC_BACKEND_URL,NEXTAUTH_SECRET
+          envVariableKeys: NEXT_PUBLIC_STRIPE_KEY,NEXT_PUBLIC_BACKEND_URL,NEXTAUTH_SECRET,DOMAIN_NAME
         env:
           NEXT_PUBLIC_STRIPE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_KEY }}
           TARGET_NEXT_PUBLIC_STRIPE_KEY: preview,development,production
@@ -28,6 +28,10 @@ jobs:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           TARGET_NEXTAUTH_SECRET: preview,development,production
           TYPE_NEXTAUTH_SECRET: encrypted
+
+          DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
+          TARGET_DOMAIN_NAME: preview,development,production
+          TYPE_DOMAIN_NAME: encrypted
 
       - uses: amondnet/vercel-action@v20
         with:
