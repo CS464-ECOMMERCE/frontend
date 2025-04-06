@@ -32,6 +32,7 @@ export const config = {
           cookies().set("token", data.token, {
             httpOnly: true,
             expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+            domain: process.env.DOMAIN_NAME,
           })
 
           return {
