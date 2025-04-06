@@ -59,7 +59,6 @@ export const config = {
       return token;
     },
     async session({ session, token }) {
-      console.log(token)
       session.user = {
         ...session.user,
         id: token.id,
@@ -84,6 +83,11 @@ export const config = {
     },
   },
   debug: true,
+  events: {
+    async signOut (message) {
+      cookies().delete('token')
+    }
+  },
 };
 
 const handler = NextAuth(config);
