@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
+import { cookies } from 'next/headers';
 export const config = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -29,6 +29,10 @@ export const config = {
           if (!data?.token) {
             throw new Error("No token received");
           }
+          cookies().set("token", data.token, {
+            httpOnly: true,
+            expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+          })
 
           return {
             id: data.user?.id || "",
@@ -36,6 +40,7 @@ export const config = {
             token: data.token,
           };
         } catch (error) {
+          console.log(error)
           return null;
         }
       },
@@ -53,6 +58,7 @@ export const config = {
       return token;
     },
     async session({ session, token }) {
+      console.log(token)
       session.user = {
         ...session.user,
         id: token.id,
@@ -67,7 +73,7 @@ export const config = {
   },
   cookies: {
     sessionToken: {
-      name: `token`,
+      name: `next_token`,
       options: {
         httpOnly: true,
         sameSite: "none",
