@@ -21,6 +21,7 @@ import {
   StoreMallDirectory,
   Dashboard,
   Logout,
+  Checklist,
 } from "@mui/icons-material";
 
 const drawerWidth = 240;
@@ -54,6 +55,16 @@ export default function Navbar(props) {
       show: !session,
     },
     {
+      name: "Order Status",
+      link: "/order",
+      icon: (
+        <Button variant="ghost" color="black">
+          <Checklist sx={{ scale: 1.5 }} />
+        </Button>
+      ),
+      show: !session,
+    },
+    {
       name: "View Cart",
       link: "/cart",
       icon: <CartTrolleyButton />,
@@ -75,6 +86,16 @@ export default function Navbar(props) {
       icon: (
         <Button variant="ghost" color="black">
           <Dashboard sx={{ scale: 1.5 }} />
+        </Button>
+      ),
+      show: session,
+    },
+    {
+      name: "View Orders",
+      link: "/admin/order",
+      icon: (
+        <Button variant="ghost" color="black">
+          <Checklist sx={{ scale: 1.5 }} />
         </Button>
       ),
       show: session,
@@ -114,7 +135,7 @@ export default function Navbar(props) {
                   <ListItemText primary={item.name} />
                 </ListItemButton>
               </ListItem>
-            )
+            ),
         )}
       </List>
     </Box>
@@ -166,7 +187,7 @@ export default function Navbar(props) {
                       item.icon
                     )}
                   </div>
-                )
+                ),
             )}
           </Box>
         </Toolbar>
