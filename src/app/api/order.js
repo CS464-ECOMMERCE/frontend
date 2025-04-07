@@ -22,4 +22,46 @@ async function PlaceOrder(email) {
   }
 }
 
-export { PlaceOrder };
+async function GetOrderById(id) {
+  try {
+    const res = await fetch(`${backendUrl}/order/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch order");
+    }
+
+    const data = await res.json();
+    return { status: 200, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
+  }
+}
+
+async function GetUserOrderByEmail(email) {
+  try {
+    const res = await fetch(`${backendUrl}/order/user/${email}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch order");
+    }
+
+    const data = await res.json();
+    return { status: 200, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
+  }
+}
+
+export { PlaceOrder, GetOrderById, GetUserOrderByEmail };
