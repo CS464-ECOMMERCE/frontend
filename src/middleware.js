@@ -9,8 +9,7 @@ export async function middleware(req) {
   });
   const pathname = req.nextUrl.pathname;
 
-  const errorPaths = ["/oh_no"];
-  if (errorPaths.some((path) => pathname.startsWith(path))) {
+  if (pathname.startsWith("/oh_no")) {
     // If user is authenticated, redirect to dashboard
     if (token) {
       return NextResponse.redirect(new URL("/admin", req.url));
@@ -20,17 +19,15 @@ export async function middleware(req) {
   }
 
   // If not authenticated, navigate to protected paths
-  const protectedPaths = ["/admin"];
-
-  if (protectedPaths.some((path) => pathname.startsWith(path))) {
+  if (pathname.startsWith("/admin")) {
     // If user is NOT authenticated, redirect to login page
     if (!token) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-  // If authenticated, prevent access to auth paths
-  const authPaths = ["/login", "/register", "/shop", "/cart"];
+  // If authenticated, prevent access to auth users
+  const authPaths = ["/login", "/register", "/shop", "/cart", "/order"];
   if (authPaths.some((path) => pathname.startsWith(path))) {
     // If user is authenticated, redirect to dashboard
     if (token) {
@@ -50,5 +47,6 @@ export const config = {
     "/shop/:path*",
     "/cart",
     "/oh_no",
+    "/order",
   ],
 };
