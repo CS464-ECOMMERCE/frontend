@@ -4,7 +4,7 @@ import { GetOrderById, GetUserOrderByEmail } from "@/src/app/api/order";
 import { useState } from "react";
 import { useEffect } from "react";
 import OrderDetails from "./OrderDetails";
-import { Typography } from "@mui/material";
+import { Skeleton, Typography } from "@mui/material";
 
 export default function OrderList({ isEmail = false, orderId, orderEmail }) {
   const [loading, setLoading] = useState(false);
@@ -45,7 +45,11 @@ export default function OrderList({ isEmail = false, orderId, orderEmail }) {
         <Typography variant="h5">Order List</Typography>
       </div>
       {loading ? (
-        <p>Loading...</p>
+        <Skeleton
+          variant="rounded"
+          height="50vh"
+          className="w-full max-w-4xl mx-auto"
+        />
       ) : orders.length > 0 ? (
         <div className="flex flex-col gap-2">
           {orders.map((order, id) => (

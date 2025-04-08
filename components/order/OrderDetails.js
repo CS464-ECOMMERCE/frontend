@@ -268,13 +268,23 @@ export default function OrderDetails({ order }) {
         </TabsContent>
       </Tabs>
       <CardFooter className="flex flex-col sm:flex-row gap-3 border-t pt-6">
-        <Button
-          variant="outline"
-          className="w-full sm:w-auto"
-          onClick={() => setActiveTab("details")}
-        >
-          View Order Details
-        </Button>
+        {activeTab === "status" ? (
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={() => setActiveTab("details")}
+          >
+            View Order Details
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={() => setActiveTab("status")}
+          >
+            View Order Status
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
