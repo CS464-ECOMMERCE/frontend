@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { cookies } from "next/headers";
+import { removeTokenCookie, setTokenCookie } from "../authCookie";
 export const config = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -29,19 +30,19 @@ export const config = {
           if (!data?.token) {
             throw new Error("No token received");
           }
-          cookies().set("token", data.token, {
-            httpOnly: true,
-            expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
-            domain: process.env.DOMAIN_NAME,
-            secure: process.env.NODE_ENV === "production",
-          });
+
+          const expiresAt = Date.now() + 60 * 60 * 1000 * 24; // 24 hours
+
+          setTokenCookie(data.token, expiresAt); // Set the token cookie
 
           return {
             id: data.user?.id || "",
             email: credentials.email,
             token: data.token,
+            expiresAt: expiresAt,
           };
         } catch (error) {
+          console.log("error", error);
           return null;
         }
       },
@@ -53,12 +54,25 @@ export const config = {
       if (trigger === "signOut") {
         return null;
       }
+
+      // Check expiration (24h)
+      if (token.expiresAt && token.expiresAt < Date.now()) {
+        removeTokenCookie();
+        return null;
+      }
+
       if (user) {
         token.accessToken = user.token; // Use the backend token
+        token.expiresAt = user.expiresAt; // Set expiration time
       }
       return token;
     },
     async session({ session, token }) {
+      if (token.expiresAt && token.expiresAt < Date.now()) {
+        removeTokenCookie();
+        return null;
+      }
+
       session.user = {
         ...session.user,
         id: token.id,
@@ -73,12 +87,7 @@ export const config = {
   },
   events: {
     async signOut() {
-      cookies().set("token", "", {
-        httpOnly: true,
-        domain: process.env.DOMAIN_NAME,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 0,
-      });
+      removeTokenCookie();
     },
   },
   cookies: {

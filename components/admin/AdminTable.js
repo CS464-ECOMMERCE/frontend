@@ -35,7 +35,7 @@ export default function AdminTable() {
       const lastCursor = paginationModel.page > 0 ? cursor : 0;
       const { status, data: res } = await GetMerchantProducts(
         paginationModel.pageSize,
-        lastCursor
+        lastCursor,
       );
 
       if (status !== 200) {
@@ -92,7 +92,12 @@ export default function AdminTable() {
     { field: "id", headerName: "ID", flex: 1 },
     { field: "name", headerName: "Product Name", flex: 2 },
     { field: "price", headerName: "Price", flex: 2 },
-    { field: "inventory", headerName: "Inventory", flex: 2 },
+    {
+      field: "inventory",
+      headerName: "Inventory",
+      flex: 2,
+      valueGetter: (value) => value || 0,
+    },
     {
       headerName: "",
       sortable: false,
