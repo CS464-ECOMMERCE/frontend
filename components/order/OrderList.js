@@ -1,21 +1,28 @@
 "use client";
 
-import { GetOrderById, GetUserOrderByEmail } from "@/src/app/api/order";
+import {
+  GetOrderById,
+  GetOrdersByMerchant,
+  GetUserOrderByEmail,
+} from "@/src/app/api/order";
 import { useState } from "react";
 import { useEffect } from "react";
 import OrderDetails from "./OrderDetails";
 import { Skeleton, Typography } from "@mui/material";
 
-export default function OrderList({ isEmail = false, orderId, orderEmail }) {
+export default function OrderList({ orderId, orderEmail, isAdmin = false }) {
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState([]);
+  const isMultiple = !!orderEmail || !!isAdmin;
 
   useEffect(() => {
     const getOrders = async () => {
       setLoading(true);
 
       let res;
-      if (isEmail) {
+      if (isAdmin) {
+        res = await GetOrdersByMerchant(orderId);
+      } else if (orderEmail) {
         res = await GetUserOrderByEmail(orderEmail);
       } else {
         res = await GetOrderById(orderId);
@@ -27,7 +34,7 @@ export default function OrderList({ isEmail = false, orderId, orderEmail }) {
         return;
       }
 
-      if (isEmail) {
+      if (isMultiple) {
         setOrders(res.data?.orders || []);
       } else {
         setOrders([res.data]);
@@ -42,7 +49,9 @@ export default function OrderList({ isEmail = false, orderId, orderEmail }) {
   return (
     <div>
       <div className="header flex items-center justify-center">
-        <Typography variant="h5">Order List</Typography>
+        <Typography variant="h5">
+          {isAdmin ? "Customer Orders" : "Order History"}
+        </Typography>
       </div>
       {loading ? (
         <Skeleton

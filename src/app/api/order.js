@@ -64,4 +64,25 @@ async function GetUserOrderByEmail(email) {
   }
 }
 
-export { PlaceOrder, GetOrderById, GetUserOrderByEmail };
+async function GetOrdersByMerchant() {
+  try {
+    const res = await fetch(`${backendUrl}/order/merchant`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch orders");
+    }
+
+    const data = await res.json();
+    return { status: 200, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
+  }
+}
+
+export { PlaceOrder, GetOrderById, GetUserOrderByEmail, GetOrdersByMerchant };

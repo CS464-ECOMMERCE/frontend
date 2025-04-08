@@ -10,9 +10,9 @@ export default function Order() {
 
   const renderDisplay = () => {
     if (orderId) {
-      return <OrderList isEmail={false} orderId={orderId} />;
+      return <OrderList orderId={orderId} />;
     } else if (orderEmail) {
-      return <OrderList isEmail={true} orderEmail={orderEmail} />;
+      return <OrderList orderEmail={orderEmail} />;
     }
     return <OrderForm />;
   };
