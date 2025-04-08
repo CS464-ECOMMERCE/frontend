@@ -14,9 +14,10 @@ import { useDispatch } from "react-redux";
 import { removeFromLocalCart } from "@/store/cartSlice";
 import { useRouter } from "next/navigation";
 import { Delete } from "@mui/icons-material";
+import { imgPlaceholder } from "@/src/app/shop/[id]/page";
 
 export default function CartCard({ loading, item, setItem }) {
-  const { price, inventory, name } = item ?? {};
+  const { price, inventory, name, images } = item ?? {};
   const [quantity, setQuantity] = useState(item?.quantity ?? 1);
   const dispatch = useDispatch();
   const debounceTimeout = useRef(null); // Ref to store the timeout ID
@@ -98,7 +99,9 @@ export default function CartCard({ loading, item, setItem }) {
         >
           <CardContent className="content">
             <CardMedia
-              image="https://plus.unsplash.com/premium_photo-1741109190036-cbd11154bc65?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D"
+              image={
+                images && images.length > 0 ? images[0] : imgPlaceholder[0]
+              }
               className="img"
             />
 
