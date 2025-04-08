@@ -88,7 +88,7 @@ const schema = z.object(
   fields.reduce((acc, field) => {
     acc[field.name] = field.validation;
     return acc;
-  }, {})
+  }, {}),
 );
 
 export function ProductDialogForm({ isNew, data, updateParentData }) {
@@ -148,12 +148,11 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
     let result;
 
     const valueWithoutImages = Object.fromEntries(
-      Object.entries(values).filter(([key]) => key !== "file_images")
+      Object.entries(values).filter(([key]) => key !== "file_images"),
     );
 
     if (isNew) {
       result = await CreateProduct(valueWithoutImages);
-      await handleAddNewProductImage(result.data.id, values.file_images);
     } else {
       // only update dirty fields
       const updateData = Object.keys(dirtyFields).reduce(
@@ -161,7 +160,7 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
           acc[key] = valueWithoutImages[key];
           return acc;
         },
-        { id: data.id }
+        { id: data.id },
       );
       result = await UpdateProductById(updateData);
     }
@@ -172,6 +171,8 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
       setSubmitting(false);
       return;
     }
+
+    await handleAddNewProductImage(result.data.id, values.file_images);
 
     showSnackbar(`Successfully ${isNew ? "added." : "updated."}`, "success");
     updateParentData(result.data);

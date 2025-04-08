@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const OrderStatus = {
   Pending: "pending",
@@ -208,14 +209,17 @@ export default function OrderDetails({ order }) {
                   {items.map((item, index) => (
                     <div key={index} className="flex items-start gap-4">
                       <div className="w-20 h-20 rounded-md overflow-hidden bg-muted flex-shrink-0">
-                        <img
-                          src={item.image || "/placeholder.svg"}
-                          alt={item.name}
+                        <LazyLoadImage
+                          src={
+                            item.product_image ||
+                            "https://images.unsplash.com/photo-1519337265831-281ec6cc8514"
+                          }
+                          alt={item.product_name}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-md">{item.name}</h4>
+                        <h4 className="text-md">{item.product_name}</h4>
                         <p className="text-md text-muted-foreground">
                           Quantity: {item.quantity}
                         </p>

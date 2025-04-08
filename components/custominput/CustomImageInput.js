@@ -21,8 +21,12 @@ export default function CustomImageInput({ item, form, initialValue }) {
 
     // Filter valid files
     const files = Array.from(e.target.files || []).filter((file) => {
-      if (!["image/jpeg", "image/png"].includes(file.type)) {
-        errors.push(`${file.name}: Only JPG and PNG files are allowed`);
+      const fileNameExtension = file.name.split(".").pop().toLowerCase();
+      if (
+        !["image/jpeg", "image/png"].includes(file.type) ||
+        (fileNameExtension !== "jpeg" && fileNameExtension !== "png")
+      ) {
+        errors.push(`${file.name}: Only JPEG and PNG files are allowed`);
         return false;
       }
       if (file.size > MAX_FILE_SIZE) {
@@ -34,7 +38,7 @@ export default function CustomImageInput({ item, form, initialValue }) {
 
     // check duplicate file names
     const newFiles = files.filter(
-      (file) => !validFiles.some((existing) => existing.name === file.name)
+      (file) => !validFiles.some((existing) => existing.name === file.name),
     );
 
     // Handle errors
@@ -56,7 +60,7 @@ export default function CustomImageInput({ item, form, initialValue }) {
 
   const removeFile = (field, indexToRemove) => {
     const updatedFiles = validFiles.filter(
-      (_, index) => index !== indexToRemove
+      (_, index) => index !== indexToRemove,
     );
     setValidFiles(updatedFiles);
     field.onChange(updatedFiles);
