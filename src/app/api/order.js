@@ -85,4 +85,32 @@ async function GetOrdersByMerchant() {
   }
 }
 
-export { PlaceOrder, GetOrderById, GetUserOrderByEmail, GetOrdersByMerchant };
+async function UpdateOrderStatus(id, status) {
+  try {
+    const res = await fetch(`${backendUrl}/order/update`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ id, status }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to update order status");
+    }
+
+    const data = await res.json();
+    return { status: 200, data };
+  } catch (err) {
+    return { status: 400, error: err.message };
+  }
+}
+
+export {
+  PlaceOrder,
+  GetOrderById,
+  GetUserOrderByEmail,
+  GetOrdersByMerchant,
+  UpdateOrderStatus,
+};

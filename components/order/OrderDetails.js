@@ -14,22 +14,27 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { Cancel, Payment } from "@mui/icons-material";
+import CancelOrderBtn from "../admin/order/CancelOrderBtn";
+import { UpdateOrderStatus } from "@/src/app/api/order";
+import { PaymentStatus, OrderStatus } from "../admin/order/status";
 
-const OrderStatus = {
-  Pending: "pending",
-  Processing: "processing",
-  Completed: "completed",
-};
-
-export default function OrderDetails({ order }) {
+export default function OrderDetails({ order, isAdmin }) {
   const {
     id,
     order_items: items,
     status,
+    payment_status,
     created_at,
     updated_at,
   } = order || {};
   const [activeTab, setActiveTab] = useState("status");
+  const [orderStatus, setOrderStatus] = useState(status);
+  const [updateStatusLoading, setUpdateStatusLoading] = useState(false);
+
+  const cancelledOrder =
+    orderStatus === OrderStatus.Cancelled ||
+    payment_status === PaymentStatus.Cancelled;
 
   const orderDate = new Date(created_at).toLocaleString("en-US", {
     year: "numeric",
@@ -60,29 +65,114 @@ export default function OrderDetails({ order }) {
   const statusSteps = [
     {
       id: "pending",
-      label: "Order Placed",
-      icon: Clock,
+      label:
+        payment_status === PaymentStatus.Pending
+          ? "Pending Payment"
+          : "Order Placed",
+      icon: payment_status === PaymentStatus.Pending ? Payment : Clock,
       date: orderDate,
     },
     {
       id: "processing",
-      label: status === OrderStatus.Processing ? "Processing" : "Processed",
+      label:
+        orderStatus === OrderStatus.Processing ? "Processing" : "Processed",
       icon: Package,
-      date: status === OrderStatus.Processing ? "" : orderDate,
+      date: orderStatus === OrderStatus.Processing ? "" : orderDate,
     },
     {
       id: "completed",
-      label: "Delivered",
-      icon: Check,
-      date: status === OrderStatus.Completed ? deliveredDate : "",
+      label:
+        payment_status === PaymentStatus.Cancelled ? "Cancelled" : "Delivered",
+      icon: payment_status === PaymentStatus.Cancelled ? Cancel : Check,
+      date:
+        orderStatus === OrderStatus.Completed || cancelledOrder
+          ? deliveredDate
+          : "",
     },
   ];
 
-  const getStatusIndex = (currentStatus) => {
+  const getStatusIndex = (currentStatus, paymentStatus) => {
+    if (paymentStatus === PaymentStatus.Pending) {
+      return statusSteps.findIndex((step) => step.id === "pending");
+    } else if (paymentStatus === PaymentStatus.Cancelled) {
+      return statusSteps.findIndex((step) => step.id === "completed");
+    }
     return statusSteps.findIndex((step) => step.id === currentStatus);
   };
 
-  const currentStatusIndex = getStatusIndex(status);
+  const currentStatusIndex = getStatusIndex(orderStatus, payment_status);
+
+  const renderShippingInfo = () => {
+    // Payment or Order Status is cancelled
+    if (cancelledOrder) {
+      return (
+        <p className="text-md text-red-500">
+          Your order has been cancelled. Please contact support for more
+          information.
+        </p>
+      );
+    }
+
+    // Payment is pending
+    if (payment_status === PaymentStatus.Pending) {
+      return (
+        <p className="text-md text-blue-500">
+          Pending payment. Please use the Stripe checkout page to pay for your
+          orders.
+        </p>
+      );
+    }
+
+    // Payment completed;
+    // Order Status is processing
+    if (orderStatus === OrderStatus.Processing) {
+      return (
+        <p className="text-md text-muted-foreground">
+          <div className="text-md text-muted-foreground">
+            Your order is being processed and will be shipped soon.
+            <br />
+            Estimated delivery: {estimatedDelivery()}
+          </div>
+        </p>
+      );
+    }
+
+    // Order Status is completed
+    return (
+      <div className="space-y-2">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2">
+          <p className="text-md">
+            Tracking Number:{" "}
+            <span className="text-md font-bold">
+              some-random-tracking-number
+            </span>
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  const updateStatus = (success, newStatus) => {
+    if (!success) {
+      return;
+    }
+
+    setOrderStatus(newStatus);
+  };
+
+  const deliverOrder = async () => {
+    if (updateStatusLoading) return;
+    const STATUS = OrderStatus.Completed;
+
+    setUpdateStatusLoading(true);
+    const res = await UpdateOrderStatus(id, STATUS);
+    if (res.status !== 200) {
+      updateStatus(false, null);
+      return;
+    }
+    updateStatus(true, STATUS);
+    setUpdateStatusLoading(false);
+  };
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -96,7 +186,9 @@ export default function OrderDetails({ order }) {
               Placed on {orderDate}
             </CardDescription>{" "}
           </div>
-          <Button variant="outline">Need Help?</Button>
+          <Button variant="outline" className={isAdmin ? "hidden" : ""}>
+            Need Help?
+          </Button>
         </div>
       </CardHeader>
       <Tabs
@@ -169,31 +261,7 @@ export default function OrderDetails({ order }) {
               {/* Status Details */}
               <div className="bg-muted/40 rounded-lg p-4">
                 <p className="text-md mb-2">Shipping Information</p>
-                {status === OrderStatus.Pending && (
-                  <p className="text-md text-muted-foreground">
-                    Your order has been placed and is being prepared for
-                    processing.
-                  </p>
-                )}
-                {status === OrderStatus.Processing && (
-                  <div className="text-md text-muted-foreground">
-                    Your order is being processed and will be shipped soon.
-                    <br />
-                    Estimated delivery: {estimatedDelivery()}
-                  </div>
-                )}
-                {status === OrderStatus.Completed && (
-                  <div className="space-y-2">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2">
-                      <p className="text-md">
-                        Tracking Number:{" "}
-                        <span className="text-md font-bold">
-                          some-random-tracking-number
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                )}
+                {renderShippingInfo()}
               </div>
             </div>
           </CardContent>
@@ -288,6 +356,18 @@ export default function OrderDetails({ order }) {
           >
             View Order Status
           </Button>
+        )}
+        {isAdmin && orderStatus === OrderStatus.Processing && (
+          <>
+            <Button
+              className="w-full sm:w-auto bg-green-700 text-white hover:bg-green-500"
+              onClick={() => deliverOrder()}
+              disabled={updateStatusLoading}
+            >
+              {updateStatusLoading ? "Loading..." : "Delivered"}
+            </Button>
+            <CancelOrderBtn orderId={id} updateParentData={updateStatus} />
+          </>
         )}
       </CardFooter>
     </Card>

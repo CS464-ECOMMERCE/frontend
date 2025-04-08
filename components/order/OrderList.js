@@ -62,7 +62,7 @@ export default function OrderList({ orderId, orderEmail, isAdmin = false }) {
       ) : orders.length > 0 ? (
         <div className="flex flex-col gap-2">
           {orders.map((order, id) => (
-            <OrderDetails key={id} order={order} />
+            <OrderDetails key={id} order={order} isAdmin={isAdmin} />
           ))}
         </div>
       ) : (
