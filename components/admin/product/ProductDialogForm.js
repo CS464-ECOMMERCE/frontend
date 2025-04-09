@@ -24,7 +24,6 @@ import {
   UploadProductImage,
 } from "@/src/app/api/product";
 import CustomImageInput from "@/components/custominput/CustomImageInput";
-import CustomSnackbar from "@/components/CustomSnackbar";
 
 const fields = [
   {
@@ -95,11 +94,6 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
 
   const defaultValues = fields.reduce((acc, field) => {
     // set default values if not new
@@ -166,7 +160,7 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
     }
 
     if (![200, 201].includes(result.status)) {
-      showSnackbar(result.data.message ?? "Failed", "error");
+      updateParentData(false, `Failed to ${isNew ? "add" : "update"} product`);
       setError("Failed to update product");
       setSubmitting(false);
       return;
@@ -174,8 +168,7 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
 
     await handleAddNewProductImage(result.data.id, values.file_images);
 
-    showSnackbar(`Successfully ${isNew ? "added." : "updated."}`, "success");
-    updateParentData(result.data);
+    updateParentData(true, `Successfully ${isNew ? "added." : "updated."}`);
     setSubmitting(false);
     closeDialog();
   }
@@ -186,10 +179,6 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
     } else {
       setOpen(true);
     }
-  }
-
-  function showSnackbar(message, severity) {
-    setSnackbar({ open: true, message, severity });
   }
 
   function closeDialog() {
@@ -262,12 +251,6 @@ export function ProductDialogForm({ isNew, data, updateParentData }) {
           </Form>
         </DialogContent>
       </Dialog>
-
-      {/* Snackbar */}
-      <CustomSnackbar
-        {...snackbar}
-        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-      />
     </>
   );
 }

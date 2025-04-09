@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { cookies } from "next/headers";
 
 export async function middleware(req) {
   const token = await getToken({
@@ -9,15 +8,6 @@ export async function middleware(req) {
     cookieName: "next_token",
   });
   const pathname = req.nextUrl.pathname;
-
-  if (pathname.startsWith("/oh_no")) {
-    // If user is authenticated, redirect to dashboard
-    if (token) {
-      return NextResponse.redirect(new URL("/admin", req.url));
-    } else {
-      return NextResponse.redirect(new URL("/shop", req.url));
-    }
-  }
 
   // If not authenticated, navigate to protected paths
   if (pathname.startsWith("/admin")) {
@@ -47,7 +37,6 @@ export const config = {
     "/register",
     "/shop/:path*",
     "/cart",
-    "/oh_no",
     "/order",
   ],
 };

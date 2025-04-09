@@ -28,10 +28,10 @@ export default function DeleteProductBtn({
     setLoading(true);
     const res = await DeleteProduct(product.id);
     if (res.status !== 200) {
-      updateParentData(false, null);
+      updateParentData(false, "Failed to delete product.");
       return;
     }
-    updateParentData(true, product.id);
+    updateParentData(true, "Successfully deleted product.");
     setLoading(false);
   };
 
