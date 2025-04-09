@@ -35,7 +35,7 @@ const schema = z.object(
   fields.reduce((acc, field) => {
     acc[field.name] = field.validation;
     return acc;
-  }, {})
+  }, {}),
 );
 
 export function CheckoutDialogForm() {
@@ -67,7 +67,7 @@ export function CheckoutDialogForm() {
     const newWindow = window.open(
       data.checkoutUrl,
       "_blank",
-      "noopener,noreferrer"
+      "noopener,noreferrer",
     );
     if (newWindow) newWindow.opener = null;
 
@@ -75,10 +75,16 @@ export function CheckoutDialogForm() {
     closeDialog();
   };
 
-  const openDialog = () => {
+  const openDialog = (e) => {
     if (cartRedux.length === 0) return;
-    setError(null);
-    setOpen(true);
+
+    if (!e && !submitting) {
+      setOpen(false);
+      form.reset();
+    } else {
+      setError(null);
+      setOpen(true);
+    }
   };
 
   const closeDialog = () => {
@@ -88,7 +94,7 @@ export function CheckoutDialogForm() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => openDialog()}>
+    <Dialog open={open} onOpenChange={(e) => openDialog(e)}>
       <DialogTrigger asChild className="checkout-btn">
         <Button variant="default">Proceed to Checkout</Button>
       </DialogTrigger>
