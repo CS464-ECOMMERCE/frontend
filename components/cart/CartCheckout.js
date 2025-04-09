@@ -6,19 +6,16 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import { Button } from "../ui/button";
 import { CheckoutDialogForm } from "../checkout/CheckoutDialogForm";
 
 export default function CartCheckout({ loading, items }) {
-  let subtotal,
-    tax = 0;
+  let subtotal;
 
   if (!loading) {
     subtotal = Object.entries(items).reduce(
       (acc, [_, item]) => acc + item.price * item.quantity,
-      0
+      0,
     );
-    tax = subtotal * 0.1;
   }
 
   return (
@@ -61,7 +58,7 @@ export default function CartCheckout({ loading, items }) {
           <CardContent className="checkout-cart-content">
             <div className="item">
               <Typography variant="body2">Tax</Typography>
-              <Typography variant="body2">$ {tax.toFixed(2)}</Typography>
+              <Typography variant="body2">Coming soon</Typography>
             </div>
           </CardContent>
 
@@ -70,9 +67,7 @@ export default function CartCheckout({ loading, items }) {
           <CardContent className="checkout-cart-content">
             <div className="item">
               <Typography variant="body1">Total</Typography>
-              <Typography variant="body1">
-                $ {(subtotal + tax).toFixed(2)}
-              </Typography>
+              <Typography variant="body1">$ {subtotal.toFixed(2)}</Typography>
             </div>
           </CardContent>
 
