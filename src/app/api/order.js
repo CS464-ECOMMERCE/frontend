@@ -11,11 +11,15 @@ async function PlaceOrder(email) {
       body: JSON.stringify({ email }),
     });
 
+    const data = await res.json();
     if (!res.ok) {
-      throw new Error("Failed to place order");
+      const errorMessage =
+        data.error && data.error.includes("cannot buy your own product")
+          ? "You cannot buy your own product"
+          : "Failed to place order";
+      throw new Error(errorMessage);
     }
 
-    const data = await res.json();
     return { status: 200, data };
   } catch (err) {
     return { status: 400, error: err.message };

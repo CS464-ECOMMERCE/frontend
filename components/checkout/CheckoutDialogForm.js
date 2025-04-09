@@ -54,12 +54,12 @@ export function CheckoutDialogForm() {
 
   const onSubmit = async (values) => {
     setSubmitting(true);
-    const { status, data } = await PlaceOrder(values.email);
+    const { status, data, error } = await PlaceOrder(values.email);
 
     dispatch(fetchCart()); // update cart state
 
     if (status !== 200) {
-      setError("Failed to place order. Please try again.");
+      setError(error);
       setSubmitting(false);
       return;
     }
