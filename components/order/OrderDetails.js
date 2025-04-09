@@ -84,9 +84,8 @@ export default function OrderDetails({ order, isAdmin }) {
     },
     {
       id: "completed",
-      label:
-        payment_status === PaymentStatus.Cancelled ? "Cancelled" : "Delivered",
-      icon: payment_status === PaymentStatus.Cancelled ? Cancel : Check,
+      label: cancelledOrder ? "Cancelled" : "Delivered",
+      icon: cancelledOrder ? Cancel : Check,
       date:
         orderStatus === OrderStatus.Completed || cancelledOrder
           ? deliveredDate
@@ -97,7 +96,7 @@ export default function OrderDetails({ order, isAdmin }) {
   const getStatusIndex = (currentStatus, paymentStatus) => {
     if (paymentStatus === PaymentStatus.Pending) {
       return statusSteps.findIndex((step) => step.id === "pending");
-    } else if (paymentStatus === PaymentStatus.Cancelled) {
+    } else if (cancelledOrder) {
       return statusSteps.findIndex((step) => step.id === "completed");
     }
     return statusSteps.findIndex((step) => step.id === currentStatus);
