@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { fetchCart } from "@/store/cartSlice";
 import { SessionProvider } from "next-auth/react";
 import FloatingCartButton from "@/components/cart/FloatingCartButton";
+import { Footer } from "@/components/Footer";
 
 function App({ children }) {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ function App({ children }) {
       <Box component="main" sx={{ p: 3 }} className="display-screen">
         {children}
       </Box>
+      <Footer />
     </>
   );
 }

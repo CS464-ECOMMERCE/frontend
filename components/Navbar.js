@@ -14,15 +14,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import CartTrolleyButton from "./cart/CartTrolleyButton";
 import { signOut, useSession } from "next-auth/react";
-import {
-  Login,
-  StoreMallDirectory,
-  Dashboard,
-  Logout,
-  Checklist,
-} from "@mui/icons-material";
+import { getNavItems } from "./navigation";
 
 const drawerWidth = 240;
 
@@ -43,76 +36,7 @@ export default function Navbar(props) {
     }
   };
 
-  const navItems = [
-    {
-      name: "Shop",
-      link: "/shop",
-      icon: (
-        <Button variant="ghost" color="black">
-          <StoreMallDirectory sx={{ scale: 1.5 }} />
-        </Button>
-      ),
-      show: !session,
-    },
-    {
-      name: "Order Status",
-      link: "/order",
-      icon: (
-        <Button variant="ghost" color="black">
-          <Checklist sx={{ scale: 1.5 }} />
-        </Button>
-      ),
-      show: !session,
-    },
-    {
-      name: "View Cart",
-      link: "/cart",
-      icon: <CartTrolleyButton />,
-      show: !session,
-    },
-    {
-      name: "Login",
-      link: "/login",
-      icon: (
-        <Button variant="ghost" color="black">
-          <Login sx={{ scale: 1.5 }} />
-        </Button>
-      ),
-      show: !session,
-    },
-    {
-      name: "Dashboard",
-      link: "/admin",
-      icon: (
-        <Button variant="ghost" color="black">
-          <Dashboard sx={{ scale: 1.5 }} />
-        </Button>
-      ),
-      show: session,
-    },
-    {
-      name: "View Orders",
-      link: "/admin/order",
-      icon: (
-        <Button variant="ghost" color="black">
-          <Checklist sx={{ scale: 1.5 }} />
-        </Button>
-      ),
-      show: session,
-    },
-    {
-      name: "Sign out",
-      link: "/login",
-      icon: null,
-      show: session,
-      icon: (
-        <Button variant="ghost" color="black">
-          <Logout sx={{ scale: 1.5 }} />
-        </Button>
-      ),
-      action: handleSignout,
-    },
-  ];
+  const navItems = getNavItems(session, handleSignout);
 
   const drawer = (
     <Box onClick={handleDrawerToggle}>
