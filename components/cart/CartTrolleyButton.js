@@ -24,7 +24,7 @@ export default function CartTrolleyButton() {
       {loading ? (
         <ShoppingCart sx={{ scale: 1.5 }} />
       ) : (
-        <Badge badgeContent={cartLength} color="secondary">
+        <Badge badgeContent={cartLength} color="error">
           <ShoppingCart sx={{ scale: 1.5 }} />
         </Badge>
       )}

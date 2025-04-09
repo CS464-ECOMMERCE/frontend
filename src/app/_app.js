@@ -6,6 +6,7 @@ import store from "./store";
 import { useEffect } from "react";
 import { fetchCart } from "@/store/cartSlice";
 import { SessionProvider } from "next-auth/react";
+import FloatingCartButton from "@/components/cart/FloatingCartButton";
 
 function App({ children }) {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ export default function AppWrapper({ children, session }) {
     <SessionProvider session={session}>
       <Provider store={store}>
         <App children={children} />
+        <FloatingCartButton />
       </Provider>
     </SessionProvider>
   );
