@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
@@ -12,6 +12,7 @@ const FloatingCartButton = () => {
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
+  const pathname = usePathname();
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -26,15 +27,15 @@ const FloatingCartButton = () => {
 
   // Show button when items are added
   useEffect(() => {
-    // Always hide if there's a session
-    if (session) {
+    // Always hide if there's a session or on the cart page
+    if (session || pathname === "/cart") {
       setIsVisible(false);
       return;
     }
 
     // Only show for non-logged in mobile users with items
     setIsVisible(isMobile && cartItems.length > 0);
-  }, [session, isMobile, cartItems.length]);
+  }, [session, isMobile, cartItems.length, pathname]);
 
   if (!isVisible) return null;
 
