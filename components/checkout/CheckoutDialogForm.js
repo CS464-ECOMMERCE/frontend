@@ -64,12 +64,13 @@ export function CheckoutDialogForm() {
       return;
     }
 
-    const newWindow = window.open(
-      data.checkoutUrl,
-      "_blank",
-      "noopener,noreferrer",
-    );
-    if (newWindow) newWindow.opener = null;
+    // const newWindow = window.open(
+    //   data.checkoutUrl,
+    //   "_blank",
+    //   "noopener,noreferrer",
+    // );
+    // if (newWindow) newWindow.opener = null;
+    window.location.href = data.checkoutUrl;
 
     setSubmitting(false);
     closeDialog();
