@@ -35,6 +35,9 @@ export default function OrderDetails({ order, isAdmin }) {
   const cancelledOrder =
     orderStatus === OrderStatus.Cancelled ||
     payment_status === PaymentStatus.Cancelled;
+  const orderPaidAndProcessing =
+    orderStatus === OrderStatus.Processing &&
+    payment_status === PaymentStatus.Completed;
 
   const orderDate = new Date(created_at).toLocaleString("en-US", {
     year: "numeric",
@@ -357,7 +360,7 @@ export default function OrderDetails({ order, isAdmin }) {
             View Order Status
           </Button>
         )}
-        {isAdmin && orderStatus === OrderStatus.Processing && (
+        {isAdmin && orderPaidAndProcessing && (
           <>
             <Button
               className="w-full sm:w-auto bg-green-700 text-white hover:bg-green-500"
