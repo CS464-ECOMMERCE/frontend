@@ -21,7 +21,7 @@ export async function registerUser(email, password, business_name, taxId) {
           taxId,
           role: "merchant",
         }),
-      }
+      },
     );
     const data = await res.json();
 
@@ -32,7 +32,7 @@ export async function registerUser(email, password, business_name, taxId) {
     if (error.message === EMAIL_EXIST) {
       return { status: 400, error: "Email already exists!" };
     } else {
-      return { status: 400, error: "Login failed. Something went wrong!" };
+      return { status: 400, error: "Register failed. Something went wrong!" };
     }
   }
 }

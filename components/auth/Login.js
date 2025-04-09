@@ -6,12 +6,12 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CustomTextField from "@/components/custominput/CustomTextField";
-import { Card, CardContent } from "@mui/material";
+import { Card, CardContent, CardHeader, Typography } from "@mui/material";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import CustomSnackbar from "../CustomSnackbar";
-
+import { CardDescription } from "../ui/card";
 const fields = [
   {
     name: "email",
@@ -81,6 +81,16 @@ export default function Login() {
     <div>
       <Card className="w-full mx-0 sm:w-[70%] sm:mx-auto">
         <CardContent className="flex flex-col gap-5 justify-center">
+          <Typography variant="h5" className="text-center">
+            Merchant Login
+          </Typography>
+          <div className="text-center">
+            If you are looking to shop, no account is needed. Go to{" "}
+            <a href="/shop" className="text-blue-500 underline">
+              shop
+            </a>
+            .
+          </div>
           <Form {...form}>
             <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
               {fields.map((field, index) => (

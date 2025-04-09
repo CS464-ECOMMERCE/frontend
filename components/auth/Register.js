@@ -32,7 +32,7 @@ const fields = [
     label: "Password",
     placeholder: "Password",
     type: "password",
-    validation: z.string().min(1, "Email must be at least 1 characters"),
+    validation: z.string().min(6, "Email must be at least 6 characters"),
   },
   {
     name: "business_name",
@@ -55,7 +55,7 @@ const schema = z
     fields.reduce((acc, field) => {
       acc[field.name] = field.validation;
       return acc;
-    }, {})
+    }, {}),
   )
   .refine((data) => data.email === data.confirm_email, {
     message: "Emails do not match",
@@ -66,7 +66,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const defaultValues = fields.reduce(
     (acc, field) => ({ ...acc, [field.name]: "" }),
-    {}
+    {},
   );
   const router = useRouter();
   const [snackbar, setSnackbar] = useState({

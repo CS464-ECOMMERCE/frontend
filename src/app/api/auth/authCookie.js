@@ -1,8 +1,6 @@
 import { cookies } from "next/headers";
 
-export function setTokenCookie(token) {
-  const expiresAt = Date.now() + 60 * 60 * 1000 * 24; // 24 hours
-
+export function setTokenCookie(token, expiresAt) {
   cookies().set("token", token, {
     httpOnly: true,
     expires: new Date(expiresAt),
