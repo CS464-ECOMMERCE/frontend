@@ -6,42 +6,68 @@ import ProductDetails from "@/components/product/ProductDetails";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ProductDialogForm } from "@/components/admin/product/ProductDialogForm";
+import CustomSnackbar from "../CustomSnackbar";
 
 export default function ProductDetailPage({ isAdmin = false, productId }) {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [formKey, setFormKey] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
   const router = useRouter();
   const fallbackRoute = isAdmin ? "/admin" : "/shop";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { status: dataStatus, data: product } = await GetProductById(
-        productId
+  const fetchData = async () => {
+    const { status: dataStatus, data: product } =
+      await GetProductById(productId);
+    if (dataStatus !== 200) {
+      router.push(fallbackRoute);
+      return;
+    }
+
+    if (product.images?.length > 0) {
+      const { status: imageStatus, data: images } = await DownloadProductImages(
+        product.images,
       );
-      if (dataStatus !== 200) {
-        router.push(fallbackRoute);
-        return;
+
+      if (imageStatus === 200) {
+        product["file_images"] = images;
       }
+    }
 
-      if (product.images?.length > 0) {
-        const { status: imageStatus, data: images } =
-          await DownloadProductImages(product.images);
+    setData(product);
+    setLoading(false);
+  };
 
-        if (imageStatus === 200) {
-          product["file_images"] = images;
-        }
-      }
-
-      setData(product);
-      setLoading(false);
-    };
+  useEffect(() => {
     fetchData();
   }, []);
 
-  const updateData = (newData) => {
-    setData((prev) => ({ ...prev, ...newData }));
+  const resetData = () => {
+    setData({});
+    setLoading(true);
     setFormKey((prev) => !prev);
+  };
+
+  const updateData = async (isSuccess, message) => {
+    if (!isSuccess) {
+      openSnackbar("error", message);
+      return;
+    }
+    openSnackbar("success", message);
+    resetData();
+    await fetchData();
+  };
+
+  const openSnackbar = (severity, message) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity,
+    });
   };
 
   return (
@@ -69,6 +95,13 @@ export default function ProductDetailPage({ isAdmin = false, productId }) {
           </div>
         </div>
       </div>
+
+      <CustomSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        severity={snackbar.severity}
+      />
     </>
   );
 }
