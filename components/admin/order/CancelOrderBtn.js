@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { UpdateOrderStatus } from "@/src/app/api/order";
+import { CancelOrderStatus } from "@/src/app/api/order";
 import { OrderStatus } from "./status";
 
 export default function CancelOrderBtn({ orderId, updateParentData }) {
@@ -22,7 +22,7 @@ export default function CancelOrderBtn({ orderId, updateParentData }) {
     if (loading) return;
 
     setLoading(true);
-    const res = await UpdateOrderStatus(orderId, STATUS);
+    const res = await CancelOrderStatus(orderId);
     if (res.status !== 200) {
       updateParentData(false, null);
       return;
