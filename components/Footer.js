@@ -1,12 +1,15 @@
+"use client";
 import Link from "next/link";
 import { Github } from "lucide-react";
 import { getNavItems } from "./navigation";
+import { useSession } from "next-auth/react";
 
 export function Footer() {
   const yl = "Yao Long";
   const rl = "Ryan Low";
   const jk = "Jing Kai";
-  const navItems = getNavItems().filter(
+  const { data: session } = useSession();
+  const navItems = getNavItems(session).filter(
     (item) => item.show && item.name !== "Sign out" && item.name !== "Login",
   );
 
