@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -20,6 +20,8 @@ import { PlaceOrder } from "@/src/app/api/order";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "@/store/cartSlice";
 import { Alert, Typography } from "@mui/material";
+import CustomCommandInput from "../custominput/CustomCommandInput";
+import { autocompleteAddress } from "@/lib/google";
 
 const fields = [
   {
@@ -28,6 +30,13 @@ const fields = [
     placeholder: "johndoe@gmail.com",
     type: "text",
     validation: z.string().email("Please enter a valid email address."),
+  },
+  {
+    name: "address",
+    label: "Address",
+    placeholder: "Enter your address",
+    type: "command",
+    validation: z.string().min(5, "Address must be at least 5 characters"),
   },
 ];
 
@@ -42,19 +51,54 @@ export function CheckoutDialogForm() {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [predictions, setPredictions] = useState([]);
+  const [isLoadingPredictions, setIsLoadingPredictions] = useState(false);
+  const [addressQuery, setAddressQuery] = useState("");
   const dispatch = useDispatch();
   const cartRedux = useSelector((state) => state.cart.items);
+
+  useEffect(() => {
+    const fetchPredictions = async () => {
+      if (!addressQuery) {
+        setPredictions([]);
+        return;
+      }
+
+      setIsLoadingPredictions(true);
+      const res = await autocompleteAddress(addressQuery);
+      setPredictions(res.map((item) => ({ ...item, value: item.description })));
+      setIsLoadingPredictions(false);
+    };
+    fetchPredictions();
+  }, [addressQuery]);
+
+  // Debounce the address query input to reduce API calls
+  const debouncedSetAddressQuery = useCallback(
+    debounce((query) => {
+      setAddressQuery(query);
+    }, 500), // 500ms delay
+    [],
+  );
+
+  // Update the address query with debounce
+  const handleAddressChange = (query) => {
+    debouncedSetAddressQuery(query);
+  };
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       email: "",
+      address: "",
     },
   });
 
   const onSubmit = async (values) => {
     setSubmitting(true);
-    const { status, data, error } = await PlaceOrder(values.email);
+    const { status, data, error } = await PlaceOrder(
+      values.email,
+      values.address,
+    );
 
     dispatch(fetchCart()); // update cart state
 
@@ -64,12 +108,6 @@ export function CheckoutDialogForm() {
       return;
     }
 
-    // const newWindow = window.open(
-    //   data.checkoutUrl,
-    //   "_blank",
-    //   "noopener,noreferrer",
-    // );
-    // if (newWindow) newWindow.opener = null;
     window.location.href = data.checkoutUrl;
 
     setSubmitting(false);
@@ -108,9 +146,21 @@ export function CheckoutDialogForm() {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {fields.map((field, i) => (
-              <CustomTextField key={i} item={field} form={form} />
-            ))}
+            {fields.map((field, i) =>
+              field.type === "command" ? (
+                <CustomCommandInput
+                  key={i}
+                  item={field}
+                  form={form}
+                  options={predictions}
+                  isLoading={isLoadingPredictions}
+                  onTextChange={handleAddressChange}
+                />
+              ) : (
+                <CustomTextField key={i} item={field} form={form} />
+              ),
+            )}
+
             {error && (
               <DialogDescription>
                 <Alert severity="error" className="flex items-center">
@@ -138,4 +188,17 @@ export function CheckoutDialogForm() {
       </DialogContent>
     </Dialog>
   );
+}
+
+// Debounce utility function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
 }

@@ -15,7 +15,7 @@ jobs:
         with:
           token: ${{ secrets.VERCEL_TOKEN }}
           projectName: cs464-frontend
-          envVariableKeys: NEXT_PUBLIC_STRIPE_KEY,NEXT_PUBLIC_BACKEND_URL,NEXTAUTH_SECRET,DOMAIN_NAME
+          envVariableKeys: NEXT_PUBLIC_STRIPE_KEY,NEXT_PUBLIC_BACKEND_URL,NEXTAUTH_SECRET,DOMAIN_NAME,GOOGLE_MAPS_API_KEY
         env:
           NEXT_PUBLIC_STRIPE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_KEY }}
           TARGET_NEXT_PUBLIC_STRIPE_KEY: preview,development,production
@@ -32,6 +32,10 @@ jobs:
           DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
           TARGET_DOMAIN_NAME: preview,development,production
           TYPE_DOMAIN_NAME: encrypted
+
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          TARGET_GOOGLE_MAPS_API_KEY: preview,development,production
+          TYPE_GOOGLE_MAPS_API_KEY: encrypted
 
       - uses: amondnet/vercel-action@v20
         with:
