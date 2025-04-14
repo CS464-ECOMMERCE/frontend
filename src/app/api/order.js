@@ -13,11 +13,20 @@ async function PlaceOrder(email, address, country) {
 
     const data = await res.json();
     if (!res.ok) {
-      const errorMessage =
-        data.error && data.error.includes("cannot buy your own product")
-          ? "You cannot buy your own product"
-          : "Failed to place order";
-      throw new Error(errorMessage);
+      const errorMessage = () => {
+        const defaultMessage = "Failed to place order";
+        if (data.error) {
+          if (data.error.includes("cannot buy your own product")) {
+            return "You cannot buy your own product";
+          } else if (data.error.includes("invalid address")) {
+            return "Address is invalid";
+          }
+          return defaultMessage;
+        } else {
+          return defaultMessage;
+        }
+      };
+      throw new Error(errorMessage());
     }
 
     return { status: 200, data };
