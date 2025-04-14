@@ -27,6 +27,7 @@ export default function OrderDetails({ order, isAdmin }) {
     payment_status,
     created_at,
     updated_at,
+    address,
   } = order || {};
   const [activeTab, setActiveTab] = useState("status");
   const [orderStatus, setOrderStatus] = useState(status);
@@ -263,6 +264,11 @@ export default function OrderDetails({ order, isAdmin }) {
               {/* Status Details */}
               <div className="bg-muted/40 rounded-lg p-4">
                 <p className="text-md mb-2">Shipping Information</p>
+                {isAdmin && (
+                  <p className="text-sm mb-2 text-gray-500">
+                    Ship to: {address}
+                  </p>
+                )}
                 {renderShippingInfo()}
               </div>
             </div>
