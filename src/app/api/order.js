@@ -1,6 +1,6 @@
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-async function PlaceOrder(email, address) {
+async function PlaceOrder(email, address, country) {
   try {
     const res = await fetch(`${backendUrl}/create_order`, {
       method: "POST",
@@ -8,7 +8,7 @@ async function PlaceOrder(email, address) {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ email, address }),
+      body: JSON.stringify({ email, address, country }),
     });
 
     const data = await res.json();

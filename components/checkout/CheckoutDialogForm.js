@@ -22,6 +22,8 @@ import { fetchCart } from "@/store/cartSlice";
 import { Alert, Typography } from "@mui/material";
 import CustomCommandInput from "../custominput/CustomCommandInput";
 import { autocompleteAddress } from "@/lib/google";
+import CustomSelect from "../custominput/CustomSelect";
+import { COUNTRY_OPTIONS } from "../util/Country";
 
 const fields = [
   {
@@ -32,11 +34,18 @@ const fields = [
     validation: z.string().email("Please enter a valid email address."),
   },
   {
+    name: "country",
+    label: "Country",
+    placeholder: "Select your country",
+    type: "select",
+    validation: z.string().min(1, "Please select your country."),
+  },
+  {
     name: "address",
     label: "Address",
     placeholder: "Enter your address",
     type: "command",
-    validation: z.string().min(5, "Address must be at least 5 characters"),
+    validation: z.string().min(5, "Please enter a valid address."),
   },
 ];
 
@@ -57,6 +66,17 @@ export function CheckoutDialogForm() {
   const dispatch = useDispatch();
   const cartRedux = useSelector((state) => state.cart.items);
 
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: "",
+      address: "",
+      country: "",
+    },
+  });
+
+  const watchCountry = form.watch("country");
+
   useEffect(() => {
     const fetchPredictions = async () => {
       if (!addressQuery) {
@@ -65,12 +85,22 @@ export function CheckoutDialogForm() {
       }
 
       setIsLoadingPredictions(true);
-      const res = await autocompleteAddress(addressQuery);
+      const res = await autocompleteAddress(
+        addressQuery,
+        form.getValues("country"),
+      );
       setPredictions(res.map((item) => ({ ...item, value: item.description })));
       setIsLoadingPredictions(false);
     };
     fetchPredictions();
   }, [addressQuery]);
+
+  // Reset address field when country changes
+  useEffect(() => {
+    form.setValue("address", "");
+    setAddressQuery("");
+    setPredictions([]);
+  }, [watchCountry, form]);
 
   // Debounce the address query input to reduce API calls
   const debouncedSetAddressQuery = useCallback(
@@ -85,19 +115,12 @@ export function CheckoutDialogForm() {
     debouncedSetAddressQuery(query);
   };
 
-  const form = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      email: "",
-      address: "",
-    },
-  });
-
   const onSubmit = async (values) => {
     setSubmitting(true);
     const { status, data, error } = await PlaceOrder(
       values.email,
       values.address,
+      values.country,
     );
 
     dispatch(fetchCart()); // update cart state
@@ -132,6 +155,35 @@ export function CheckoutDialogForm() {
     setOpen(false);
   };
 
+  const renderInput = (field) => {
+    switch (field.type) {
+      case "text":
+        return <CustomTextField key={field.name} item={field} form={form} />;
+      case "select":
+        return (
+          <CustomSelect
+            key={field.name}
+            item={field}
+            form={form}
+            options={COUNTRY_OPTIONS}
+          />
+        );
+      case "command":
+        return (
+          <CustomCommandInput
+            key={field.name}
+            item={field}
+            form={form}
+            options={predictions}
+            isLoading={isLoadingPredictions}
+            onTextChange={handleAddressChange}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={(e) => openDialog(e)}>
       <DialogTrigger asChild className="checkout-btn">
@@ -146,20 +198,7 @@ export function CheckoutDialogForm() {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {fields.map((field, i) =>
-              field.type === "command" ? (
-                <CustomCommandInput
-                  key={i}
-                  item={field}
-                  form={form}
-                  options={predictions}
-                  isLoading={isLoadingPredictions}
-                  onTextChange={handleAddressChange}
-                />
-              ) : (
-                <CustomTextField key={i} item={field} form={form} />
-              ),
-            )}
+            {fields.map((field) => renderInput(field))}
 
             {error && (
               <DialogDescription>
